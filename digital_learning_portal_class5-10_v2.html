@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shree Hanuman Digital Learning Portal - Class 5-10</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Inter:wght@300..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+  body{font-family:'Inter',sans-serif;background-color:#f0fdf4;}
+  .kid-font{font-family:'Fredoka',sans-serif;}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-track{background:#f1f1f1;border-radius:10px;}
+  ::-webkit-scrollbar-thumb{background:#86efac;border-radius:10px;}
+  ::-webkit-scrollbar-thumb:hover{background:#4ade80;}
+  .grid-item-animate{transition:all .2s ease-in-out;}
+  .grid-item-animate:hover{transform:scale(1.15);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;animation:fadeIn .4s ease-out;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .view{display:none;}
+  .view.active{display:block;animation:fadeIn .3s ease-out;}
+  .subject-card:hover{transform:translateY(-4px);}
+</style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-green-200">
+
+<!-- ============= TOP BRAND HEADER (shared) ============= -->
+<header class="bg-gradient-to-r from-emerald-600 to-green-500 text-white shadow-lg border-b-4 border-yellow-400">
+  <div class="max-w-7xl mx-auto px-4 py-3 sm:py-5 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-4 text-center md:text-left">
+      <div class="bg-white text-emerald-600 p-3 rounded-full shadow-inner border-2 border-yellow-300 animate-bounce">
+        <i class="fa-solid fa-graduation-cap text-3xl"></i>
+      </div>
+      <div>
+        <h1 class="kid-font text-2xl sm:text-3xl font-bold tracking-wide flex items-center justify-center md:justify-start gap-2">
+          <span>Digital Learning Portal</span>
+          <span class="text-yellow-200 text-lg sm:text-xl font-normal">(डिजिटल शिक्षा प्रवेशद्वार)</span>
+        </h1>
+        <p class="text-xs sm:text-sm text-green-100 font-medium tracking-wider flex items-center justify-center md:justify-start gap-2 mt-1">
+          <i class="fa-solid fa-school"></i>
+          <span>Shree Hanuman Secondary School &mdash; Class 5 to 10</span>
+        </p>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <button id="langToggleBtn" onclick="toggleLanguage()" class="bg-yellow-400 hover:bg-yellow-300 text-emerald-900 font-bold px-4 py-2 rounded-full shadow transition-all duration-300 flex items-center gap-2 border-2 border-white">
+        <i class="fa-solid fa-language text-lg"></i>
+        <span id="langText">नेपालीमा हेर्नुहोस्</span>
+      </button>
+      <div class="bg-emerald-800 bg-opacity-40 backdrop-blur-md px-4 py-2 rounded-xl border border-emerald-400 text-right hidden sm:block">
+        <p class="text-[10px] text-green-200 uppercase tracking-widest font-bold">Concept &amp; Design</p>
+        <p class="text-sm font-bold text-yellow-300">KAPIL K.C.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl w-full mx-auto px-4 py-6 flex-grow">
+
+<!-- ============================================================ -->
+<!-- VIEW 1: PORTAL HOME (class picker -> subject picker)          -->
+<!-- ============================================================ -->
+<div id="view-portal" class="view active space-y-6">
+
+  <div class="bg-white border-l-8 border-emerald-500 rounded-xl p-4 shadow-sm">
+    <h2 class="text-lg font-bold text-emerald-800 kid-font flex items-center gap-2">
+      <i class="fa-solid fa-hand-pointer text-yellow-500"></i>
+      <span data-en="Step 1: Choose your Class" data-ne="चरण १: आफ्नो कक्षा छान्नुहोस्">Step 1: Choose your Class</span>
+    </h2>
+    <p class="text-sm text-gray-600 mt-1" data-en="Pick a class below to see available subjects and learning games." data-ne="विषय र सिकाइ खेलहरू हेर्न तलबाट कक्षा छान्नुहोस्।">Pick a class below to see available subjects and learning games.</p>
+  </div>
+
+  <div id="class-picker" class="grid grid-cols-3 sm:grid-cols-6 gap-3"></div>
+
+  <div id="subject-section" class="hidden space-y-4">
+    <div class="bg-white border-l-8 border-indigo-500 rounded-xl p-4 shadow-sm flex items-center justify-between gap-3 flex-wrap">
+      <h2 class="text-lg font-bold text-indigo-800 kid-font flex items-center gap-2">
+        <i class="fa-solid fa-layer-group text-indigo-500"></i>
+        <span data-en="Step 2: Choose a Subject" data-ne="चरण २: विषय छान्नुहोस्">Step 2: Choose a Subject</span>
+        &mdash; <span id="picked-class-label" class="text-emerald-700"></span>
+      </h2>
+      <button onclick="backToClassPicker()" class="text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span data-en="Change Class" data-ne="कक्षा फेर्नुहोस्">Change Class</span>
+      </button>
+    </div>
+    <div id="subject-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW 2: COMING SOON (any subject not yet built)                -->
+<!-- ============================================================ -->
+<div id="view-soon" class="view space-y-6">
+  <button onclick="backToPortal()" class="text-sm font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-2">
+    <i class="fa-solid fa-arrow-left"></i>
+    <span data-en="Back to Subjects" data-ne="विषयहरूमा फर्कनुहोस्">Back to Subjects</span>
+  </button>
+
+  <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-md border-2 border-amber-200 text-center space-y-3">
+    <i class="fa-solid fa-hammer text-amber-500 text-4xl"></i>
+    <h2 id="soon-title" class="kid-font text-2xl font-bold text-slate-800"></h2>
+    <p class="text-sm text-slate-500 max-w-xl mx-auto" data-en="This subject's interactive games are being built next. Right now, Class 5 Mathematics is fully playable — try it! Below is the planned chapter roadmap for this subject." data-ne="यो विषयका अन्तरक्रियात्मक खेलहरू अहिले बनाउँदै छौं। हाल कक्षा ५ को गणित मात्र पूर्ण रूपमा चल्छ — प्रयास गर्नुहोस्! तलको सूचीमा यस विषयका योजनाबद्ध अध्यायहरू छन्।">This subject's interactive games are being built next. Right now, Class 5 Mathematics is fully playable — try it! Below is the planned chapter roadmap for this subject.</p>
+    <button onclick="goToClass5Math()" class="mt-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl shadow inline-flex items-center gap-2">
+      <i class="fa-solid fa-calculator"></i>
+      <span data-en="Try Class 5 Math Lab" data-ne="कक्षा ५ गणित प्रयोगशाला हेर्नुहोस्">Try Class 5 Math Lab</span>
+    </button>
+  </div>
+
+  <div class="bg-white rounded-2xl p-6 shadow-md border-2 border-slate-100">
+    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+      <i class="fa-solid fa-list-check text-emerald-600"></i>
+      <span data-en="Planned Chapter Roadmap (10 chapters)" data-ne="योजनाबद्ध अध्याय सूची (१० अध्याय)">Planned Chapter Roadmap (10 chapters)</span>
+    </h3>
+    <ol id="soon-chapter-list" class="grid sm:grid-cols-2 gap-2 text-sm text-slate-600 list-decimal list-inside"></ol>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW 3: CLASS 5 MATH LAB (fully interactive)                   -->
+<!-- ============================================================ -->
+<div id="view-lab" class="view space-y-6">
+  <div class="flex items-center justify-between flex-wrap gap-3">
+    <button onclick="backToPortal()" class="text-sm font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-2">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span data-en="Back to Subjects" data-ne="विषयहरूमा फर्कनुहोस्">Back to Subjects</span>
+    </button>
+    <h2 class="kid-font text-xl sm:text-2xl font-bold text-emerald-800 flex items-center gap-2">
+      <i class="fa-solid fa-flask text-yellow-500"></i>
+      <span data-en="Class 5 &mdash; Mathematics Lab" data-ne="कक्षा ५ &mdash; गणित प्रयोगशाला">Class 5 &mdash; Mathematics Lab</span>
+    </h2>
+    <div></div>
+  </div>
+
+  <!-- Lab Tab Navigation -->
+  <div class="bg-emerald-700 bg-opacity-90 rounded-xl overflow-x-auto">
+    <div class="flex justify-around sm:justify-start gap-1 px-2">
+      <button onclick="switchLabTab('add')" id="labtab-add" class="labtab-btn px-4 py-3 text-xs sm:text-sm font-bold text-green-100 hover:text-white border-b-4 border-transparent flex items-center gap-1.5"><i class="fa-solid fa-plus"></i><span data-en="Addition" data-ne="जोड">Addition</span></button>
+      <button onclick="switchLabTab('sub')" id="labtab-sub" class="labtab-btn px-4 py-3 text-xs sm:text-sm font-bold text-green-100 hover:text-white border-b-4 border-transparent flex items-center gap-1.5"><i class="fa-solid fa-minus"></i><span data-en="Subtraction" data-ne="घटाउ">Subtraction</span></button>
+      <button onclick="switchLabTab('mul')" id="labtab-mul" class="labtab-btn px-4 py-3 text-xs sm:text-sm font-bold text-yellow-300 border-b-4 border-yellow-300 flex items-center gap-1.5"><i class="fa-solid fa-xmark"></i><span data-en="Multiplication" data-ne="गुणन">Multiplication</span></button>
+      <button onclick="switchLabTab('div')" id="labtab-div" class="labtab-btn px-4 py-3 text-xs sm:text-sm font-bold text-green-100 hover:text-white border-b-4 border-transparent flex items-center gap-1.5"><i class="fa-solid fa-divide"></i><span data-en="Division" data-ne="भाग">Division</span></button>
+      <button onclick="switchLabTab('simplify')" id="labtab-simplify" class="labtab-btn px-4 py-3 text-xs sm:text-sm font-bold text-green-100 hover:text-white border-b-4 border-transparent flex items-center gap-1.5"><i class="fa-solid fa-scale-balanced"></i><span data-en="Simplification" data-ne="सरलीकरण">Simplification</span></button>
+      <button onclick="switchLabTab('quiz')" id="labtab-quiz" class="labtab-btn px-4 py-3 text-xs sm:text-sm font-bold text-green-100 hover:text-white border-b-4 border-transparent flex items-center gap-1.5"><i class="fa-solid fa-gamepad"></i><span data-en="Mixed Quiz" data-ne="मिश्रित हाजिरीजवाफ">Mixed Quiz</span></button>
+    </div>
+  </div>
+
+  <!-- ===== ADDITION TAB ===== -->
+  <section id="labpanel-add" class="tab-panel space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-6">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2 pb-2 border-b"><i class="fa-solid fa-sliders text-emerald-600"></i><span data-en="Pick two numbers" data-ne="दुई संख्या छान्नुहोस्">Pick two numbers</span></h3>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="First number:" data-ne="पहिलो संख्या:">First number:</label><span id="val-add1" class="bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full kid-font">6</span></div>
+          <input type="range" id="slider-add1" min="1" max="20" value="6" oninput="updateAddition()" class="w-full h-3 bg-indigo-100 rounded-lg accent-indigo-600">
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Second number:" data-ne="दोस्रो संख्या:">Second number:</label><span id="val-add2" class="bg-pink-100 text-pink-800 font-extrabold px-3 py-1 rounded-full kid-font">5</span></div>
+          <input type="range" id="slider-add2" min="1" max="20" value="5" oninput="updateAddition()" class="w-full h-3 bg-pink-100 rounded-lg accent-pink-600">
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 text-center space-y-3">
+          <div class="kid-font text-3xl font-extrabold text-slate-800">
+            <span class="text-indigo-600" id="eq-add1">6</span>
+            <span class="text-amber-500 mx-1">+</span>
+            <span class="text-pink-600" id="eq-add2">5</span>
+            <span class="text-slate-500 mx-1">=</span>
+            <span class="text-emerald-600 bg-emerald-100 px-3.5 py-1 rounded-2xl" id="eq-addsum">11</span>
+          </div>
+          <button onclick="speakAddition()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-volume-high"></i><span data-en="Read Aloud" data-ne="सुन्नुहोस्">Read Aloud</span></button>
+        </div>
+      </div>
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100">
+        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-border-all text-emerald-600"></i><span data-en="Combine the groups!" data-ne="समूहहरू मिलाऔं!">Combine the groups!</span></h3>
+        <div class="min-h-[300px] bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-4 flex flex-wrap gap-2 content-start" id="visual-add-container"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SUBTRACTION TAB ===== -->
+  <section id="labpanel-sub" class="tab-panel space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-6">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2 pb-2 border-b"><i class="fa-solid fa-sliders text-emerald-600"></i><span data-en="Start with, then take away" data-ne="सुरुको संख्या, अनि घटाउने संख्या">Start with, then take away</span></h3>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Start with:" data-ne="सुरुमा:">Start with:</label><span id="val-sub1" class="bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full kid-font">15</span></div>
+          <input type="range" id="slider-sub1" min="1" max="25" value="15" oninput="onSub1Change()" class="w-full h-3 bg-indigo-100 rounded-lg accent-indigo-600">
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Take away:" data-ne="घटाउने:">Take away:</label><span id="val-sub2" class="bg-rose-100 text-rose-800 font-extrabold px-3 py-1 rounded-full kid-font">6</span></div>
+          <input type="range" id="slider-sub2" min="0" max="15" value="6" oninput="updateSubtraction()" class="w-full h-3 bg-rose-100 rounded-lg accent-rose-600">
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 text-center space-y-3">
+          <div class="kid-font text-3xl font-extrabold text-slate-800">
+            <span class="text-indigo-600" id="eq-sub1">15</span>
+            <span class="text-amber-500 mx-1">&minus;</span>
+            <span class="text-rose-600" id="eq-sub2">6</span>
+            <span class="text-slate-500 mx-1">=</span>
+            <span class="text-emerald-600 bg-emerald-100 px-3.5 py-1 rounded-2xl" id="eq-subans">9</span>
+          </div>
+          <button onclick="speakSubtraction()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-volume-high"></i><span data-en="Read Aloud" data-ne="सुन्नुहोस्">Read Aloud</span></button>
+        </div>
+      </div>
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100">
+        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-border-all text-emerald-600"></i><span data-en="Faded items are taken away" data-ne="धमिलो देखिनेहरू घटाइयो">Faded items are taken away</span></h3>
+        <div class="min-h-[300px] bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-4 flex flex-wrap gap-2 content-start" id="visual-sub-container"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MULTIPLICATION TAB (original content) ===== -->
+  <section id="labpanel-mul" class="tab-panel active space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 flex flex-col justify-between space-y-6">
+        <div>
+          <h3 class="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2 pb-2 border-b"><i class="fa-solid fa-sliders text-emerald-600"></i><span data-en="Interactive Sliders" data-ne="नियन्त्रक स्लाइडरहरू">Interactive Sliders</span></h3>
+          <div class="space-y-2 mb-6">
+            <div class="flex justify-between items-center">
+              <label class="font-semibold text-gray-700 text-sm flex items-center gap-1.5"><span class="inline-block w-3 h-3 bg-indigo-500 rounded-full"></span><span data-en="Table of (Rows):" data-ne="कतिको तालिका (रो):">Table of (Rows):</span></label>
+              <span id="val-row" class="bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full text-base kid-font">5</span>
+            </div>
+            <input type="range" id="slider-row" min="1" max="10" value="5" oninput="updateVisualization()" class="w-full h-3 bg-indigo-100 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+          </div>
+          <div class="space-y-2 mb-6">
+            <div class="flex justify-between items-center">
+              <label class="font-semibold text-gray-700 text-sm flex items-center gap-1.5"><span class="inline-block w-3 h-3 bg-pink-500 rounded-full"></span><span data-en="Multiply By (Columns):" data-ne="कति पटक (कोलम):">Multiply By (Columns):</span></label>
+              <span id="val-col" class="bg-pink-100 text-pink-800 font-extrabold px-3 py-1 rounded-full text-base kid-font">4</span>
+            </div>
+            <input type="range" id="slider-col" min="1" max="10" value="4" oninput="updateVisualization()" class="w-full h-3 bg-pink-100 rounded-lg appearance-none cursor-pointer accent-pink-600">
+          </div>
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 shadow-inner text-center space-y-3">
+          <p class="text-xs uppercase font-extrabold tracking-wider text-amber-700" data-en="Mathematical Representation" data-ne="गणितीय समीकरण">Mathematical Representation</p>
+          <div class="kid-font text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight select-none">
+            <span class="text-indigo-600" id="eq-row">5</span><span class="text-amber-500 mx-1">&times;</span><span class="text-pink-600" id="eq-col">4</span><span class="text-slate-500 mx-1">=</span><span class="text-emerald-600 bg-emerald-100 px-3.5 py-1 rounded-2xl shadow-sm border border-emerald-300" id="eq-ans">20</span>
+          </div>
+          <button onclick="speakFormula()" class="w-full mt-2 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-volume-high animate-pulse"></i><span data-en="Read Aloud Table" data-ne="सस्वर वाचन गर्नुहोस्">Read Aloud Table</span></button>
+        </div>
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200">
+          <p class="text-xs font-bold uppercase text-slate-500 mb-2" data-en="Repeated Addition View:" data-ne="पटक-पटकको जोड विधि:">Repeated Addition View:</p>
+          <div id="repeated-addition" class="text-base font-semibold text-slate-700 tracking-wide break-words">5 + 5 + 5 + 5 = 20</div>
+        </div>
+      </div>
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 flex flex-col justify-between space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
+          <div>
+            <h3 class="font-bold text-gray-800 text-lg flex items-center gap-2"><i class="fa-solid fa-border-all text-emerald-600"></i><span data-en="Interactive Visual Array Grid" data-ne="अन्तरक्रियात्मक विजुअल ग्रिड">Interactive Visual Array Grid</span></h3>
+            <p class="text-xs text-gray-500 mt-0.5" data-en="Click on any object to hear its count position!" data-ne="जम्मा सङ्ख्या थाहा पाउन कुनै पनि गोलो घेरामा क्लिक गर्नुहोस्!">Click on any object to hear its count position!</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-gray-500" data-en="Icon Theme:" data-ne="चित्रको शैली:">Icon Theme:</span>
+            <select id="gridTheme" onchange="changeGridTheme()" class="bg-emerald-50 text-emerald-800 font-bold text-xs py-1.5 px-3 rounded-lg border border-emerald-200 outline-none">
+              <option value="circle">🍎 Circles</option>
+              <option value="star">⭐️ Stars</option>
+              <option value="flower">🌸 Flowers</option>
+              <option value="hanuman">🔱 Hanuman Gada</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex-grow flex items-center justify-center p-4 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 min-h-[280px]">
+          <div id="visual-grid-container" class="grid gap-3 p-4 justify-center items-center"></div>
+        </div>
+        <div class="bg-emerald-50 rounded-xl p-3.5 flex flex-col sm:flex-row items-center justify-between text-xs sm:text-sm text-emerald-800 font-medium gap-3">
+          <div class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded bg-indigo-500"></span><span data-en="Rows represent groups" data-ne="तेर्सो लहर (रो) ले समूह जनाउँछ">Rows represent groups</span></div>
+          <div class="flex items-center gap-2"><span class="inline-block w-4 h-4 rounded bg-pink-500"></span><span data-en="Columns represent items per group" data-ne="ठाडो लहर (कोलम) ले प्रति समूह संख्या जनाउँछ">Columns represent items per group</span></div>
+          <div class="bg-emerald-200 text-emerald-900 font-bold px-3 py-1 rounded-full text-xs">Total: <span id="visual-total-badge">20</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bonus: 10x10 times table chart -->
+    <div class="bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100">
+      <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-table-cells text-emerald-600"></i><span data-en="Bonus: Full Times Table Chart" data-ne="बोनस: पूर्ण गुणन तालिका चार्ट">Bonus: Full Times Table Chart</span></h3>
+      <div class="overflow-x-auto"><table class="w-full text-center border-collapse"><thead><tr id="matrix-header-row"></tr></thead><tbody id="matrix-body"></tbody></table></div>
+      <p id="chart-live-feedback" class="text-center mt-4 text-lg kid-font">&nbsp;</p>
+    </div>
+  </section>
+
+  <!-- ===== DIVISION TAB ===== -->
+  <section id="labpanel-div" class="tab-panel space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-6">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2 pb-2 border-b"><i class="fa-solid fa-sliders text-emerald-600"></i><span data-en="Share equally into groups" data-ne="बराबर समूहमा बाँड्नुहोस्">Share equally into groups</span></h3>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Total items:" data-ne="जम्मा वस्तु:">Total items:</label><span id="val-div1" class="bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full kid-font">20</span></div>
+          <input type="range" id="slider-div1" min="1" max="40" value="20" oninput="updateDivision()" class="w-full h-3 bg-indigo-100 rounded-lg accent-indigo-600">
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Number of groups:" data-ne="समूह संख्या:">Number of groups:</label><span id="val-div2" class="bg-pink-100 text-pink-800 font-extrabold px-3 py-1 rounded-full kid-font">4</span></div>
+          <input type="range" id="slider-div2" min="1" max="10" value="4" oninput="updateDivision()" class="w-full h-3 bg-pink-100 rounded-lg accent-pink-600">
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 text-center space-y-3">
+          <div class="kid-font text-2xl sm:text-3xl font-extrabold text-slate-800">
+            <span class="text-indigo-600" id="eq-div1">20</span>
+            <span class="text-amber-500 mx-1">&divide;</span>
+            <span class="text-pink-600" id="eq-div2">4</span>
+            <span class="text-slate-500 mx-1">=</span>
+            <span class="text-emerald-600 bg-emerald-100 px-3.5 py-1 rounded-2xl" id="eq-divq">5</span>
+          </div>
+          <p class="text-sm text-slate-500" data-en="Remainder:" data-ne="बाँकी:">Remainder:</p>
+          <span id="eq-divr" class="text-lg font-bold text-rose-600">0</span>
+          <button onclick="speakDivision()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-volume-high"></i><span data-en="Read Aloud" data-ne="सुन्नुहोस्">Read Aloud</span></button>
+        </div>
+      </div>
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100">
+        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-border-all text-emerald-600"></i><span data-en="Each box is one group; leftover items glow amber" data-ne="प्रत्येक बाकस एक समूह हो; बाँकी वस्तु सुनौलो देखिन्छ">Each box is one group; leftover items glow amber</span></h3>
+        <div class="min-h-[300px] bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-4 flex flex-wrap gap-3 content-start" id="visual-div-container"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SIMPLIFICATION TAB ===== -->
+  <section id="labpanel-simplify" class="tab-panel space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-6">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2 pb-2 border-b"><i class="fa-solid fa-sliders text-emerald-600"></i><span data-en="Build a fraction" data-ne="भिन्न बनाउनुहोस्">Build a fraction</span></h3>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Numerator (top):" data-ne="अंश (माथि):">Numerator (top):</label><span id="val-simp-num" class="bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full kid-font">6</span></div>
+          <input type="range" id="slider-simp-num" min="1" max="11" value="6" oninput="onSimpNumChange()" class="w-full h-3 bg-indigo-100 rounded-lg accent-indigo-600">
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Denominator (bottom):" data-ne="हर (तल):">Denominator (bottom):</label><span id="val-simp-den" class="bg-pink-100 text-pink-800 font-extrabold px-3 py-1 rounded-full kid-font">8</span></div>
+          <input type="range" id="slider-simp-den" min="2" max="12" value="8" oninput="updateSimplification()" class="w-full h-3 bg-pink-100 rounded-lg accent-pink-600">
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 text-center space-y-2">
+          <p id="simp-fraction-display" class="kid-font text-2xl font-extrabold text-slate-800">6/8</p>
+          <p id="simp-gcd-text" class="text-xs text-slate-500">GCD(6, 8) = 2</p>
+          <p class="text-sm text-slate-500" data-en="Simplest form:" data-ne="सरल रूप:">Simplest form:</p>
+          <p id="simp-answer" class="kid-font text-3xl font-extrabold text-emerald-600 bg-emerald-100 inline-block px-4 py-1 rounded-2xl">3/4</p>
+          <button onclick="speakSimplify()" class="w-full mt-2 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-volume-high"></i><span data-en="Read Aloud" data-ne="सुन्नुहोस्">Read Aloud</span></button>
+        </div>
+      </div>
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-6">
+        <div>
+          <p class="text-xs font-bold uppercase text-slate-500 mb-2" data-en="Before simplifying:" data-ne="सरल गर्नु अघि:">Before simplifying:</p>
+          <div id="simp-bar-before" class="flex w-full h-14 rounded-xl overflow-hidden border-2 border-slate-200"></div>
+        </div>
+        <div>
+          <p class="text-xs font-bold uppercase text-slate-500 mb-2" data-en="After simplifying (same size, fewer pieces):" data-ne="सरल गरेपछि (उही आकार, कम टुक्रा):">After simplifying (same size, fewer pieces):</p>
+          <div id="simp-bar-after" class="flex w-full h-14 rounded-xl overflow-hidden border-2 border-emerald-300"></div>
+        </div>
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 text-sm text-slate-700" id="simp-steps"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MIXED QUIZ TAB ===== -->
+  <section id="labpanel-quiz" class="tab-panel space-y-6">
+    <div class="bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 border-b pb-4">
+        <div class="flex gap-3">
+          <div class="bg-indigo-50 px-4 py-2 rounded-xl text-center"><p class="text-[10px] font-bold text-indigo-500 uppercase">Score</p><p id="quiz-score" class="kid-font text-xl font-extrabold text-indigo-700">0</p></div>
+          <div class="bg-pink-50 px-4 py-2 rounded-xl text-center"><p class="text-[10px] font-bold text-pink-500 uppercase">Streak</p><p id="quiz-streak" class="kid-font text-xl font-extrabold text-pink-700">0</p></div>
+          <div class="bg-amber-50 px-4 py-2 rounded-xl text-center"><p class="text-[10px] font-bold text-amber-600 uppercase">Best</p><p id="quiz-highscore" class="kid-font text-xl font-extrabold text-amber-700">0</p></div>
+        </div>
+        <div class="w-full sm:w-48 bg-slate-100 rounded-full h-3 overflow-hidden"><div id="quiz-progress-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width:0%"></div></div>
+      </div>
+
+      <div class="text-center py-6">
+        <p class="text-xs font-bold uppercase text-slate-400 tracking-widest mb-3" data-en="Select an option below!" data-ne="तलका विकल्पहरू मध्ये एक छान्नुहोस्!">Select an option below!</p>
+        <h2 id="quiz-question-text" class="kid-font text-4xl sm:text-5xl font-extrabold text-slate-800">6 + 5 = ?</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+        <button onclick="submitAnswer(0)" id="opt-0" class="quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center"><span>11</span><span class="text-xs text-slate-400 uppercase">A</span></button>
+        <button onclick="submitAnswer(1)" id="opt-1" class="quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center"><span>10</span><span class="text-xs text-slate-400 uppercase">B</span></button>
+        <button onclick="submitAnswer(2)" id="opt-2" class="quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center"><span>12</span><span class="text-xs text-slate-400 uppercase">C</span></button>
+        <button onclick="submitAnswer(3)" id="opt-3" class="quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center"><span>9</span><span class="text-xs text-slate-400 uppercase">D</span></button>
+      </div>
+      <div id="quiz-feedback-box" class="hidden mt-6 p-4 rounded-xl text-center font-bold text-sm sm:text-base transition-all duration-300"></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- VIEW 4: CLASS 6 MATH LAB (fully interactive)                   -->
+<!-- ============================================================ -->
+<div id="view-lab6" class="view space-y-6">
+  <div class="flex items-center justify-between flex-wrap gap-3">
+    <button onclick="backToPortal()" class="text-sm font-bold text-emerald-700 hover:text-emerald-900 flex items-center gap-2">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span data-en="Back to Subjects" data-ne="विषयहरूमा फर्कनुहोस्">Back to Subjects</span>
+    </button>
+    <h2 class="kid-font text-xl sm:text-2xl font-bold text-emerald-800 flex items-center gap-2">
+      <i class="fa-solid fa-flask text-yellow-500"></i>
+      <span data-en="Class 6 &mdash; Mathematics Lab" data-ne="कक्षा ६ &mdash; गणित प्रयोगशाला">Class 6 &mdash; Mathematics Lab</span>
+    </h2>
+    <div></div>
+  </div>
+
+  <!-- Lab6 Tab Navigation -->
+  <div class="bg-emerald-700 bg-opacity-90 rounded-xl overflow-x-auto">
+    <div class="flex justify-around sm:justify-start gap-1 px-2">
+      <button onclick="switchLab6Tab('int')" id="labtab6-int" class="labtab6-btn px-4 py-3 text-xs sm:text-sm font-bold text-yellow-300 border-b-4 border-yellow-300 flex items-center gap-1.5"><i class="fa-solid fa-arrows-left-right"></i><span data-en="Integers" data-ne="पूर्णांक">Integers</span></button>
+      <button onclick="switchLab6Tab('hcflcm')" id="labtab6-hcflcm" class="labtab6-btn px-4 py-3 text-xs sm:text-sm font-bold text-green-100 hover:text-white border-b-4 border-transparent flex items-center gap-1.5"><i class="fa-solid fa-diagram-project"></i><span data-en="HCF &amp; LCM" data-ne="म.स.उ. र ल.स.गु.">HCF &amp; LCM</span></button>
+      <button onclick="switchLab6Tab('ratio')" id="labtab6-ratio" class="labtab6-btn px-4 py-3 text-xs sm:text-sm font-bold text-green-100 hover:text-white border-b-4 border-transparent flex items-center gap-1.5"><i class="fa-solid fa-scale-balanced"></i><span data-en="Ratio &amp; Proportion" data-ne="अनुपात र समानुपात">Ratio &amp; Proportion</span></button>
+      <button onclick="switchLab6Tab('pct')" id="labtab6-pct" class="labtab6-btn px-4 py-3 text-xs sm:text-sm font-bold text-green-100 hover:text-white border-b-4 border-transparent flex items-center gap-1.5"><i class="fa-solid fa-percent"></i><span data-en="Percentage" data-ne="प्रतिशत">Percentage</span></button>
+      <button onclick="switchLab6Tab('quiz6')" id="labtab6-quiz6" class="labtab6-btn px-4 py-3 text-xs sm:text-sm font-bold text-green-100 hover:text-white border-b-4 border-transparent flex items-center gap-1.5"><i class="fa-solid fa-gamepad"></i><span data-en="Mixed Quiz" data-ne="मिश्रित हाजिरीजवाफ">Mixed Quiz</span></button>
+    </div>
+  </div>
+
+  <!-- ===== INTEGERS TAB ===== -->
+  <section id="labpanel6-int" class="tab-panel active space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-6">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2 pb-2 border-b"><i class="fa-solid fa-sliders text-emerald-600"></i><span data-en="Start point and jump" data-ne="सुरुको बिन्दु र फड्को">Start point and jump</span></h3>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Start at:" data-ne="सुरु बिन्दु:">Start at:</label><span id="val-int1" class="bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full kid-font">-3</span></div>
+          <input type="range" id="slider-int1" min="-15" max="15" value="-3" oninput="updateIntegers()" class="w-full h-3 bg-indigo-100 rounded-lg accent-indigo-600">
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Jump by:" data-ne="फड्को:">Jump by:</label><span id="val-int2" class="bg-pink-100 text-pink-800 font-extrabold px-3 py-1 rounded-full kid-font">7</span></div>
+          <input type="range" id="slider-int2" min="-15" max="15" value="7" oninput="updateIntegers()" class="w-full h-3 bg-pink-100 rounded-lg accent-pink-600">
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 text-center space-y-3">
+          <div class="kid-font text-2xl sm:text-3xl font-extrabold text-slate-800">
+            <span class="text-indigo-600" id="eq-int1">-3</span>
+            <span class="text-amber-500 mx-1" id="eq-intop">+</span>
+            <span class="text-pink-600" id="eq-int2">7</span>
+            <span class="text-slate-500 mx-1">=</span>
+            <span class="text-emerald-600 bg-emerald-100 px-3.5 py-1 rounded-2xl" id="eq-intans">4</span>
+          </div>
+          <button onclick="speakIntegers()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-volume-high"></i><span data-en="Read Aloud" data-ne="सुन्नुहोस्">Read Aloud</span></button>
+        </div>
+        <p class="text-xs text-slate-500" data-en="Tip: a negative jump moves left; a positive jump moves right." data-ne="सुझाव: ऋणात्मक फड्को बायाँतिर र धनात्मक फड्को दायाँतिर सर्छ।">Tip: a negative jump moves left; a positive jump moves right.</p>
+      </div>
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100">
+        <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2"><i class="fa-solid fa-ruler-horizontal text-emerald-600"></i><span data-en="Number line hop" data-ne="सङ्ख्या रेखामा फड्को">Number line hop</span></h3>
+        <div class="min-h-[220px] bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-4 overflow-x-auto" id="visual-int-container"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HCF & LCM TAB ===== -->
+  <section id="labpanel6-hcflcm" class="tab-panel space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-6">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2 pb-2 border-b"><i class="fa-solid fa-sliders text-emerald-600"></i><span data-en="Pick two numbers" data-ne="दुई संख्या छान्नुहोस्">Pick two numbers</span></h3>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="First number:" data-ne="पहिलो संख्या:">First number:</label><span id="val-hl1" class="bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full kid-font">12</span></div>
+          <input type="range" id="slider-hl1" min="2" max="60" value="12" oninput="updateHcfLcm()" class="w-full h-3 bg-indigo-100 rounded-lg accent-indigo-600">
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Second number:" data-ne="दोस्रो संख्या:">Second number:</label><span id="val-hl2" class="bg-pink-100 text-pink-800 font-extrabold px-3 py-1 rounded-full kid-font">18</span></div>
+          <input type="range" id="slider-hl2" min="2" max="60" value="18" oninput="updateHcfLcm()" class="w-full h-3 bg-pink-100 rounded-lg accent-pink-600">
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 text-center space-y-2">
+          <p class="text-sm text-slate-500" data-en="HCF (highest common factor):" data-ne="म.स.उ. (महत्तम समापवर्तक):">HCF (highest common factor):</p>
+          <p id="hl-hcf" class="kid-font text-2xl font-extrabold text-emerald-600 bg-emerald-100 inline-block px-4 py-1 rounded-2xl">6</p>
+          <p class="text-sm text-slate-500 pt-2" data-en="LCM (lowest common multiple):" data-ne="ल.स.गु. (लघुत्तम समापवर्त्य):">LCM (lowest common multiple):</p>
+          <p id="hl-lcm" class="kid-font text-2xl font-extrabold text-indigo-600 bg-indigo-100 inline-block px-4 py-1 rounded-2xl">36</p>
+          <button onclick="speakHcfLcm()" class="w-full mt-2 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-volume-high"></i><span data-en="Read Aloud" data-ne="सुन्नुहोस्">Read Aloud</span></button>
+        </div>
+      </div>
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-4">
+        <h3 class="font-bold text-gray-800 mb-1 flex items-center gap-2"><i class="fa-solid fa-list-ol text-emerald-600"></i><span data-en="Prime factorization steps" data-ne="अभाज्य गुणनखण्ड चरणहरू">Prime factorization steps</span></h3>
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 text-sm text-slate-700" id="hl-steps"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RATIO & PROPORTION TAB ===== -->
+  <section id="labpanel6-ratio" class="tab-panel space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-6">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2 pb-2 border-b"><i class="fa-solid fa-sliders text-emerald-600"></i><span data-en="Two quantities" data-ne="दुई परिमाण">Two quantities</span></h3>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Quantity A:" data-ne="परिमाण क:">Quantity A:</label><span id="val-ra" class="bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full kid-font">8</span></div>
+          <input type="range" id="slider-ra" min="1" max="40" value="8" oninput="updateRatio()" class="w-full h-3 bg-indigo-100 rounded-lg accent-indigo-600">
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Quantity B:" data-ne="परिमाण ख:">Quantity B:</label><span id="val-rb" class="bg-pink-100 text-pink-800 font-extrabold px-3 py-1 rounded-full kid-font">12</span></div>
+          <input type="range" id="slider-rb" min="1" max="40" value="12" oninput="updateRatio()" class="w-full h-3 bg-pink-100 rounded-lg accent-pink-600">
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 text-center space-y-2">
+          <p class="text-sm text-slate-500" data-en="Ratio A : B in simplest form:" data-ne="सरल रूपमा अनुपात क : ख:">Ratio A : B in simplest form:</p>
+          <p id="ratio-answer" class="kid-font text-3xl font-extrabold text-emerald-600 bg-emerald-100 inline-block px-4 py-1 rounded-2xl">2:3</p>
+          <button onclick="speakRatio()" class="w-full mt-2 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-volume-high"></i><span data-en="Read Aloud" data-ne="सुन्नुहोस्">Read Aloud</span></button>
+        </div>
+      </div>
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-4">
+        <h3 class="font-bold text-gray-800 mb-1 flex items-center gap-2"><i class="fa-solid fa-border-all text-emerald-600"></i><span data-en="Visual bar split" data-ne="भिजुअल पट्टी विभाजन">Visual bar split</span></h3>
+        <div id="ratio-bar" class="flex w-full h-16 rounded-xl overflow-hidden border-2 border-slate-200"></div>
+        <p class="text-sm text-slate-600" id="ratio-explain"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PERCENTAGE TAB ===== -->
+  <section id="labpanel6-pct" class="tab-panel space-y-4">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-4 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-6">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2 pb-2 border-b"><i class="fa-solid fa-sliders text-emerald-600"></i><span data-en="Find the percentage" data-ne="प्रतिशत पत्ता लगाउनुहोस्">Find the percentage</span></h3>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Total value:" data-ne="जम्मा मूल्य:">Total value:</label><span id="val-pctv" class="bg-indigo-100 text-indigo-800 font-extrabold px-3 py-1 rounded-full kid-font">200</span></div>
+          <input type="range" id="slider-pctv" min="10" max="1000" step="10" value="200" oninput="updatePercentage()" class="w-full h-3 bg-indigo-100 rounded-lg accent-indigo-600">
+        </div>
+        <div class="space-y-2">
+          <div class="flex justify-between"><label class="text-sm font-semibold text-gray-700" data-en="Percent:" data-ne="प्रतिशत:">Percent:</label><span id="val-pctp" class="bg-pink-100 text-pink-800 font-extrabold px-3 py-1 rounded-full kid-font">25%</span></div>
+          <input type="range" id="slider-pctp" min="1" max="100" value="25" oninput="updatePercentage()" class="w-full h-3 bg-pink-100 rounded-lg accent-pink-600">
+        </div>
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200 text-center space-y-2">
+          <p class="text-sm text-slate-500" id="pct-question"></p>
+          <p id="pct-answer" class="kid-font text-3xl font-extrabold text-emerald-600 bg-emerald-100 inline-block px-4 py-1 rounded-2xl">50</p>
+          <button onclick="speakPercentage()" class="w-full mt-2 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm"><i class="fa-solid fa-volume-high"></i><span data-en="Read Aloud" data-ne="सुन्नुहोस्">Read Aloud</span></button>
+        </div>
+      </div>
+      <div class="lg:col-span-8 bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100 space-y-4">
+        <h3 class="font-bold text-gray-800 mb-1 flex items-center gap-2"><i class="fa-solid fa-chart-simple text-emerald-600"></i><span data-en="Visual fill bar" data-ne="भिजुअल भराइ पट्टी">Visual fill bar</span></h3>
+        <div class="w-full h-14 bg-slate-100 rounded-xl overflow-hidden border-2 border-slate-200 relative">
+          <div id="pct-fill" class="h-full bg-emerald-500 transition-all duration-300 flex items-center justify-end pr-2 text-white text-xs font-bold" style="width:25%"></div>
+        </div>
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 text-sm text-slate-700" id="pct-steps"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MIXED QUIZ (CLASS 6) TAB ===== -->
+  <section id="labpanel6-quiz6" class="tab-panel space-y-6">
+    <div class="bg-white rounded-2xl p-6 shadow-md border-2 border-emerald-100">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 border-b pb-4">
+        <div class="flex gap-3">
+          <div class="bg-indigo-50 px-4 py-2 rounded-xl text-center"><p class="text-[10px] font-bold text-indigo-500 uppercase">Score</p><p id="quiz6-score" class="kid-font text-xl font-extrabold text-indigo-700">0</p></div>
+          <div class="bg-pink-50 px-4 py-2 rounded-xl text-center"><p class="text-[10px] font-bold text-pink-500 uppercase">Streak</p><p id="quiz6-streak" class="kid-font text-xl font-extrabold text-pink-700">0</p></div>
+          <div class="bg-amber-50 px-4 py-2 rounded-xl text-center"><p class="text-[10px] font-bold text-amber-600 uppercase">Best</p><p id="quiz6-highscore" class="kid-font text-xl font-extrabold text-amber-700">0</p></div>
+        </div>
+        <div class="w-full sm:w-48 bg-slate-100 rounded-full h-3 overflow-hidden"><div id="quiz6-progress-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width:0%"></div></div>
+      </div>
+
+      <div class="text-center py-6">
+        <p class="text-xs font-bold uppercase text-slate-400 tracking-widest mb-3" data-en="Select an option below!" data-ne="तलका विकल्पहरू मध्ये एक छान्नुहोस्!">Select an option below!</p>
+        <h2 id="quiz6-question-text" class="kid-font text-3xl sm:text-4xl font-extrabold text-slate-800">-3 + 7 = ?</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+        <button onclick="submitAnswer6(0)" id="opt6-0" class="quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center"><span>4</span><span class="text-xs text-slate-400 uppercase">A</span></button>
+        <button onclick="submitAnswer6(1)" id="opt6-1" class="quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center"><span>10</span><span class="text-xs text-slate-400 uppercase">B</span></button>
+        <button onclick="submitAnswer6(2)" id="opt6-2" class="quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center"><span>-4</span><span class="text-xs text-slate-400 uppercase">C</span></button>
+        <button onclick="submitAnswer6(3)" id="opt6-3" class="quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center"><span>-10</span><span class="text-xs text-slate-400 uppercase">D</span></button>
+      </div>
+      <div id="quiz6-feedback-box" class="hidden mt-6 p-4 rounded-xl text-center font-bold text-sm sm:text-base transition-all duration-300"></div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer class="bg-slate-900 text-slate-400 text-center py-6 border-t-4 border-yellow-400 mt-12">
+  <div class="max-w-7xl mx-auto px-4 space-y-3">
+    <p class="text-sm font-semibold tracking-wide text-slate-200"><i class="fa-solid fa-calculator text-yellow-400 mr-1.5"></i><span data-en="Digital Learning Portal &mdash; Class 5 to 10" data-ne="डिजिटल शिक्षा प्रवेशद्वार &mdash; कक्षा ५ देखि १०">Digital Learning Portal &mdash; Class 5 to 10</span></p>
+    <div class="pt-2 border-t border-slate-800 text-xs flex flex-col sm:flex-row justify-between items-center gap-3">
+      <p>&copy; 2026 Shree Hanuman Secondary School. All Rights Reserved.</p>
+      <div class="flex items-center gap-2"><span class="bg-emerald-950 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800 font-bold">Created by: <strong class="text-yellow-400">KAPIL K.C.</strong></span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =========================== GLOBAL STATE =========================== */
+let currentLanguage = 'en';
+let currentView = 'portal';
+let selectedClass = null;
+let selectedSubject = null;
+let activeLabTab = 'mul';
+
+const classesList = [5,6,7,8,9,10];
+const subjectsList = [
+  {id:'math', en:'Mathematics', ne:'गणित', icon:'fa-calculator', color:'emerald'},
+  {id:'optmath', en:'Optional Math', ne:'ऐच्छिक गणित', icon:'fa-square-root-variable', color:'indigo'},
+  {id:'english', en:'English', ne:'अंग्रेजी', icon:'fa-book', color:'sky'},
+  {id:'science', en:'Science', ne:'विज्ञान', icon:'fa-flask', color:'lime'},
+  {id:'social', en:'Social Studies', ne:'सामाजिक अध्ययन', icon:'fa-earth-asia', color:'amber'},
+  {id:'nepali', en:'Nepali', ne:'नेपाली', icon:'fa-language', color:'rose'},
+  {id:'accounting', en:'Accounting', ne:'लेखा', icon:'fa-file-invoice-dollar', color:'purple'},
+  {id:'office', en:'Office Management', ne:'कार्यालय व्यवस्थापन', icon:'fa-briefcase', color:'orange'},
+];
+
+const chapterRoadmap = {
+  math: [['Set','सेट'],['Whole Numbers & Integers','पूर्ण संख्या र पूर्णांक'],['HCF and LCM','म.स.उ. र ल.स.गु.'],['Fraction & Decimal','भिन्न र दशमलव'],['Ratio & Proportion','अनुपात र समानुपात'],['Percentage','प्रतिशत'],['Profit, Loss & Simple Interest','नाफा, नोक्सान र साधारण ब्याज'],['Algebra (Expressions & Equations)','बीजगणित (व्यंजक र समीकरण)'],['Geometry (Lines, Angles & Triangles)','ज्यामिति (रेखा, कोण र त्रिभुज)'],['Mensuration (Area & Perimeter)','क्षेत्रमिति (क्षेत्रफल र परिमिति)'],['Statistics & Data Handling','तथ्याङ्क तथा डाटा ह्यान्डलिङ']],
+  optmath: [['Sets','सेट'],['Functions','प्रकार्य'],['Sequence & Series','अनुक्रम र श्रृङ्खला'],['Trigonometry Basics','त्रिकोणमितिको आधार'],['Coordinate Geometry','निर्देशांक ज्यामिति'],['Matrices','म्याट्रिक्स'],['Limits Intro','लिमिट परिचय'],['Polynomials','बहुपद'],['Statistics','तथ्याङ्क'],['Vectors','भेक्टर']],
+  english: [['Parts of Speech','शब्दका भेद'],['Tenses','टेन्स'],['Articles & Prepositions','आर्टिकल र प्रिपोजिसन'],['Vocabulary Builder','शब्दभण्डार निर्माण'],['Reading Comprehension','पठन बोध'],['Story & Poem (Literature)','कथा र कविता (साहित्य)'],['Letter Writing','पत्र लेखन'],['Essay & Paragraph Writing','निबन्ध र अनुच्छेद लेखन'],['Note Making & Summary','नोट बनाउने र सारांश'],['Communication Skills','सञ्चार सीप']],
+  science: [['Introducing Science','विज्ञानको परिचय'],['Cell & Living Beings','कोष र जीवित प्राणी'],['Human Body Systems','मानव शरीरका प्रणालीहरू'],['Matter & Its Properties','पदार्थ र यसका गुणहरू'],['Force, Work & Simple Machines','बल, कार्य र साधारण मेसिन'],['Heat & Light','ताप र प्रकाश'],['Sound','ध्वनि'],['Electricity & Magnetism','विद्युत र चुम्बकत्व'],['Environment & Natural Resources','वातावरण र प्राकृतिक स्रोत'],['Earth & Space','पृथ्वी र अन्तरिक्ष'],['Health, Population & Hygiene','स्वास्थ्य, जनसंख्या र सरसफाइ']],
+  social: [['Our Nepal: History Timeline','हाम्रो नेपाल: इतिहास समयरेखा'],['Geography of Nepal','नेपालको भूगोल'],['Government & Civic Education','सरकार र नागरिक शिक्षा'],['Economic Development','आर्थिक विकास'],['Population & Environment','जनसंख्या र वातावरण'],['Culture & Heritage','संस्कृति र सम्पदा'],['Human Rights & Democracy','मानव अधिकार र लोकतन्त्र'],['Good Governance','सुशासन'],['Our Neighbours & the World','हाम्रा छिमेकी र विश्व'],['Disaster Management','विपद् व्यवस्थापन']],
+  nepali: [['वर्णविन्यास','Spelling'],['व्याकरण','Grammar'],['सन्धि','Sandhi'],['समास','Samas'],['कारक','Karak'],['निबन्ध लेखन','Essay Writing'],['पत्र लेखन','Letter Writing'],['कविता','Poetry'],['कथा','Story'],['शब्द भण्डार','Vocabulary']],
+  accounting: [['Basics of Accounting','लेखाको आधार'],['Journal Entries','जर्नल एन्ट्री'],['Ledger','लेजर'],['Trial Balance','मिलान परीक्षण'],['Cash Book','नगद बही'],['Bank Reconciliation','बैंक मिलान'],['Final Accounts','अन्तिम खाता'],['Depreciation','ह्रास'],['Partnership Accounts','साझेदारी खाता'],['Financial Statements','वित्तीय विवरण']],
+  office: [['Office Basics','कार्यालयको आधार'],['Filing Systems','फाइलिङ प्रणाली'],['Correspondence','पत्राचार'],['Office Equipment','कार्यालय उपकरण'],['Records Management','अभिलेख व्यवस्थापन'],['Communication Skills','सञ्चार सीप'],['Time Management','समय व्यवस्थापन'],['Office Etiquette','कार्यालय शिष्टाचार'],['Meeting Management','बैठक व्यवस्थापन'],['Digital Office Tools','डिजिटल कार्यालय उपकरण']],
+};
+
+/* =========================== INIT =========================== */
+window.onload = function(){
+  renderClassPicker();
+  try{
+    const storedHigh = localStorage.getItem('school_math_highscore');
+    if(storedHigh) highscore = parseInt(storedHigh);
+    const storedHigh6 = localStorage.getItem('school_math6_highscore');
+    if(storedHigh6) highscore6 = parseInt(storedHigh6);
+  }catch(e){}
+  applyLanguageTranslations();
+};
+
+/* =========================== PORTAL NAVIGATION =========================== */
+function renderClassPicker(){
+  const el = document.getElementById('class-picker');
+  el.innerHTML = '';
+  classesList.forEach(c=>{
+    const btn = document.createElement('button');
+    btn.className = "bg-white hover:bg-emerald-50 border-2 border-emerald-200 hover:border-emerald-500 rounded-2xl p-5 shadow-sm transition-all flex flex-col items-center gap-2 subject-card";
+    btn.innerHTML = `<i class="fa-solid fa-graduation-cap text-2xl text-emerald-600"></i><span class="kid-font font-extrabold text-lg text-slate-800">${(currentLanguage==='en')?'Class '+c:'कक्षा '+nepaliNumbers(c)}</span>`;
+    btn.onclick = ()=>selectClass(c);
+    el.appendChild(btn);
+  });
+}
+
+function selectClass(c){
+  selectedClass = c;
+  playTickSound();
+  document.getElementById('subject-section').classList.remove('hidden');
+  document.getElementById('picked-class-label').innerText = (currentLanguage==='en') ? `Class ${c}` : `कक्षा ${nepaliNumbers(c)}`;
+  renderSubjectGrid();
+  document.getElementById('subject-section').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function backToClassPicker(){
+  selectedClass = null;
+  document.getElementById('subject-section').classList.add('hidden');
+}
+
+function renderSubjectGrid(){
+  const el = document.getElementById('subject-grid');
+  el.innerHTML = '';
+  subjectsList.forEach(s=>{
+    const btn = document.createElement('button');
+    btn.className = `bg-white hover:bg-${s.color}-50 border-2 border-${s.color}-200 hover:border-${s.color}-500 rounded-2xl p-5 shadow-sm transition-all flex flex-col items-center gap-2 text-center subject-card`;
+    const isReady = (selectedClass === 5 && s.id === 'math') || (selectedClass === 6 && s.id === 'math');
+    btn.innerHTML = `<i class="fa-solid ${s.icon} text-2xl text-${s.color}-600"></i>
+      <span class="kid-font font-bold text-sm text-slate-800">${(currentLanguage==='en')?s.en:s.ne}</span>
+      ${isReady ? `<span class="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-0.5 rounded-full">${(currentLanguage==='en')?'PLAY NOW':'अहिले खेल्नुहोस्'}</span>` : `<span class="text-[10px] font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">${(currentLanguage==='en')?'COMING SOON':'चाँडै आउँदैछ'}</span>`}`;
+    btn.onclick = ()=>selectSubject(s.id);
+    el.appendChild(btn);
+  });
+}
+
+function selectSubject(subjectId){
+  selectedSubject = subjectId;
+  playTickSound();
+  if(selectedClass === 5 && subjectId === 'math'){
+    showView('lab');
+    initLab();
+  } else if(selectedClass === 6 && subjectId === 'math'){
+    showView('lab6');
+    initLab6();
+  } else {
+    showView('soon');
+    const subj = subjectsList.find(s=>s.id===subjectId);
+    document.getElementById('soon-title').innerText = (currentLanguage==='en')
+      ? `Class ${selectedClass} — ${subj.en} (Coming Soon)`
+      : `कक्षा ${nepaliNumbers(selectedClass)} — ${subj.ne} (चाँडै आउँदैछ)`;
+    const list = document.getElementById('soon-chapter-list');
+    list.innerHTML = '';
+    (chapterRoadmap[subjectId]||[]).forEach(pair=>{
+      const li = document.createElement('li');
+      li.innerText = (currentLanguage==='en') ? pair[0] : pair[1];
+      list.appendChild(li);
+    });
+  }
+}
+
+function goToClass5Math(){
+  selectedClass = 5;
+  selectedSubject = 'math';
+  showView('lab');
+  initLab();
+}
+
+function backToPortal(){
+  showView('portal');
+}
+
+function showView(view){
+  currentView = view;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* =========================== LANGUAGE =========================== */
+function toggleLanguage(){
+  currentLanguage = (currentLanguage==='en') ? 'ne' : 'en';
+  const btn = document.getElementById('langToggleBtn');
+  const btnText = document.getElementById('langText');
+  if(currentLanguage==='en'){
+    btnText.innerText = "नेपालीमा हेर्नुहोस्";
+    btn.className = "bg-yellow-400 hover:bg-yellow-300 text-emerald-950 font-bold px-4 py-2 rounded-full shadow transition-all duration-300 flex items-center gap-2 border-2 border-white";
+  } else {
+    btnText.innerText = "View in English";
+    btn.className = "bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-4 py-2 rounded-full shadow transition-all duration-300 flex items-center gap-2 border-2 border-white";
+  }
+  applyLanguageTranslations();
+  renderClassPicker();
+  if(selectedClass) renderSubjectGrid();
+  if(currentView==='lab'){ updateAddition(); updateSubtraction(); updateVisualization(); updateDivision(); updateSimplification(); }
+  if(currentView==='lab6'){ updateIntegers(); updateHcfLcm(); updateRatio(); updatePercentage(); }
+  playTickSound();
+}
+
+function applyLanguageTranslations(){
+  document.querySelectorAll('[data-en]').forEach(el=>{
+    const enVal = el.getAttribute('data-en');
+    const neVal = el.getAttribute('data-ne');
+    el.innerHTML = (currentLanguage==='en') ? enVal : neVal;
+  });
+}
+
+function nepaliNumbers(num){
+  const d = ['०','१','२','३','४','५','६','७','८','९'];
+  return num.toString().split('').map(ch=>(ch>='0'&&ch<='9')?d[parseInt(ch)]:ch).join('');
+}
+
+/* =========================== AUDIO =========================== */
+const AudioContextRef = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function getAudioContext(){ if(!audioCtx) audioCtx = new AudioContextRef(); if(audioCtx.state==='suspended') audioCtx.resume(); return audioCtx; }
+function playTone(freq,type,duration,volume=0.2){
+  try{
+    const ctx = getAudioContext();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type = type; osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    gain.gain.setValueAtTime(volume, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime+duration);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+duration);
+  }catch(e){}
+}
+function playSuccessSound(){ playTone(261.63,'sine',0.15,0.25); setTimeout(()=>playTone(329.63,'sine',0.15,0.25),100); setTimeout(()=>playTone(392,'sine',0.15,0.25),200); setTimeout(()=>playTone(523.25,'sine',0.3,0.3),300); }
+function playFailSound(){ playTone(180,'sawtooth',0.25,0.25); setTimeout(()=>playTone(140,'sawtooth',0.4,0.25),150); }
+function playTickSound(){ playTone(800,'sine',0.05,0.15); }
+
+function speakText(textEn, textNe){
+  if('speechSynthesis' in window){
+    window.speechSynthesis.cancel();
+    const text = (currentLanguage==='en') ? textEn : textNe;
+    const utter = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    if(currentLanguage==='ne'){
+      const v = voices.find(v=>v.lang.startsWith('ne')||v.lang.startsWith('hi'));
+      if(v) utter.voice = v;
+      utter.rate = 0.85;
+    } else {
+      const v = voices.find(v=>v.lang.startsWith('en'));
+      if(v) utter.voice = v;
+      utter.rate = 0.95;
+    }
+    window.speechSynthesis.speak(utter);
+  }
+}
+
+/* =========================== LAB TABS =========================== */
+function initLab(){
+  activeLabTab = 'mul';
+  switchLabTab('mul');
+  updateAddition();
+  updateSubtraction();
+  updateVisualization();
+  buildInteractiveMatrixTable();
+  updateDivision();
+  updateSimplification();
+  generateNewQuiz();
+}
+
+function switchLabTab(tabId){
+  playTickSound();
+  activeLabTab = tabId;
+  document.querySelectorAll('.labtab-btn').forEach(btn=>{
+    btn.classList.remove('text-yellow-300','border-yellow-300');
+    btn.classList.add('text-green-100','border-transparent');
+  });
+  const activeBtn = document.getElementById('labtab-'+tabId);
+  activeBtn.classList.remove('text-green-100','border-transparent');
+  activeBtn.classList.add('text-yellow-300','border-yellow-300');
+  document.querySelectorAll('#view-lab .tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('labpanel-'+tabId).classList.add('active');
+}
+
+/* =========================== ADDITION =========================== */
+function updateAddition(){
+  const a = parseInt(document.getElementById('slider-add1').value);
+  const b = parseInt(document.getElementById('slider-add2').value);
+  const disp = n => (currentLanguage==='en') ? n : nepaliNumbers(n);
+  document.getElementById('val-add1').innerText = disp(a);
+  document.getElementById('val-add2').innerText = disp(b);
+  document.getElementById('eq-add1').innerText = disp(a);
+  document.getElementById('eq-add2').innerText = disp(b);
+  document.getElementById('eq-addsum').innerText = disp(a+b);
+
+  const container = document.getElementById('visual-add-container');
+  container.innerHTML = '';
+  for(let i=0;i<a;i++){
+    const d = document.createElement('div');
+    d.className = "w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-500 shadow grid-item-animate flex items-center justify-center";
+    container.appendChild(d);
+  }
+  const plus = document.createElement('div');
+  plus.className = "w-7 h-7 flex items-center justify-center text-xl font-black text-amber-500";
+  plus.innerText = '+';
+  container.appendChild(plus);
+  for(let i=0;i<b;i++){
+    const d = document.createElement('div');
+    d.className = "w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-pink-500 shadow grid-item-animate flex items-center justify-center";
+    container.appendChild(d);
+  }
+}
+function speakAddition(){
+  const a = document.getElementById('slider-add1').value, b = document.getElementById('slider-add2').value;
+  speakText(`${a} plus ${b} equals ${parseInt(a)+parseInt(b)}`, `${nepaliNumbers(a)} जोड ${nepaliNumbers(b)} बराबर ${nepaliNumbers(parseInt(a)+parseInt(b))} हुन्छ`);
+}
+
+/* =========================== SUBTRACTION =========================== */
+function onSub1Change(){
+  const start = parseInt(document.getElementById('slider-sub1').value);
+  const takeSlider = document.getElementById('slider-sub2');
+  takeSlider.max = start;
+  if(parseInt(takeSlider.value) > start) takeSlider.value = start;
+  updateSubtraction();
+}
+function updateSubtraction(){
+  const start = parseInt(document.getElementById('slider-sub1').value);
+  const take = parseInt(document.getElementById('slider-sub2').value);
+  const remain = start - take;
+  const disp = n => (currentLanguage==='en') ? n : nepaliNumbers(n);
+  document.getElementById('val-sub1').innerText = disp(start);
+  document.getElementById('val-sub2').innerText = disp(take);
+  document.getElementById('eq-sub1').innerText = disp(start);
+  document.getElementById('eq-sub2').innerText = disp(take);
+  document.getElementById('eq-subans').innerText = disp(remain);
+
+  const container = document.getElementById('visual-sub-container');
+  container.innerHTML = '';
+  for(let i=0;i<remain;i++){
+    const d = document.createElement('div');
+    d.className = "w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500 shadow grid-item-animate";
+    container.appendChild(d);
+  }
+  for(let i=0;i<take;i++){
+    const d = document.createElement('div');
+    d.className = "w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-rose-300 opacity-40 shadow grid-item-animate flex items-center justify-center";
+    d.innerHTML = '<i class="fa-solid fa-xmark text-rose-700 text-xs"></i>';
+    container.appendChild(d);
+  }
+}
+function speakSubtraction(){
+  const a = document.getElementById('slider-sub1').value, b = document.getElementById('slider-sub2').value;
+  speakText(`${a} minus ${b} equals ${parseInt(a)-parseInt(b)}`, `${nepaliNumbers(a)} घटाउ ${nepaliNumbers(b)} बराबर ${nepaliNumbers(parseInt(a)-parseInt(b))} हुन्छ`);
+}
+
+/* =========================== MULTIPLICATION (original) =========================== */
+let currentGridTheme = 'circle';
+function updateVisualization(){
+  const rowCount = parseInt(document.getElementById('slider-row').value);
+  const colCount = parseInt(document.getElementById('slider-col').value);
+  const disp = n => (currentLanguage==='en') ? n : nepaliNumbers(n);
+  document.getElementById('val-row').innerText = disp(rowCount);
+  document.getElementById('val-col').innerText = disp(colCount);
+  document.getElementById('eq-row').innerText = disp(rowCount);
+  document.getElementById('eq-col').innerText = disp(colCount);
+  const total = rowCount*colCount;
+  document.getElementById('eq-ans').innerText = disp(total);
+  document.getElementById('visual-total-badge').innerText = disp(total);
+
+  let terms = [];
+  for(let i=0;i<colCount;i++) terms.push(disp(rowCount));
+  document.getElementById('repeated-addition').innerText = terms.join(' + ') + ' = ' + disp(total);
+
+  renderGrid(rowCount, colCount);
+}
+function changeGridTheme(){
+  currentGridTheme = document.getElementById('gridTheme').value;
+  updateVisualization();
+}
+function renderGrid(rows, cols){
+  const container = document.getElementById('visual-grid-container');
+  container.innerHTML = '';
+  container.style.gridTemplateColumns = `repeat(${cols}, minmax(0,1fr))`;
+  const themeMap = {circle:{icon:'🍎',bg:'bg-red-100'},star:{icon:'⭐️',bg:'bg-yellow-100'},flower:{icon:'🌸',bg:'bg-pink-100'},hanuman:{icon:'🔱',bg:'bg-orange-100'}};
+  const theme = themeMap[currentGridTheme] || themeMap.circle;
+  let count = 0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      count++;
+      const cell = document.createElement('div');
+      cell.className = `grid-item-animate ${theme.bg} rounded-lg w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-lg cursor-pointer shadow-sm`;
+      cell.innerText = theme.icon;
+      const n = count;
+      cell.onclick = ()=>{ playTone(400+n*5,'sine',0.1,0.2); speakText(`Number ${n}`, `संख्या ${nepaliNumbers(n)}`); };
+      container.appendChild(cell);
+    }
+  }
+}
+function speakFormula(){
+  const r = document.getElementById('slider-row').value, c = document.getElementById('slider-col').value;
+  speakText(`${r} times ${c} equals ${parseInt(r)*parseInt(c)}`, `${nepaliNumbers(r)} गुणा ${nepaliNumbers(c)} बराबर ${nepaliNumbers(parseInt(r)*parseInt(c))} हुन्छ`);
+}
+function buildInteractiveMatrixTable(){
+  const headerRow = document.getElementById('matrix-header-row');
+  const tbody = document.getElementById('matrix-body');
+  headerRow.innerHTML=''; tbody.innerHTML='';
+  const corner = document.createElement('th');
+  corner.className = "bg-emerald-600 text-white font-extrabold border-2 border-emerald-500 p-2 text-sm rounded-tl-xl";
+  corner.innerHTML = '&times;';
+  headerRow.appendChild(corner);
+  for(let c=1;c<=10;c++){
+    const th = document.createElement('th');
+    th.className = `header-col-cell-${c} bg-indigo-50 border-2 border-slate-200 p-2 font-extrabold text-indigo-700 text-xs sm:text-base`;
+    th.innerText = c;
+    headerRow.appendChild(th);
+  }
+  for(let r=1;r<=10;r++){
+    const tr = document.createElement('tr');
+    const rowTh = document.createElement('th');
+    rowTh.className = `header-row-cell-${r} bg-pink-50 border-2 border-slate-200 p-2 font-extrabold text-pink-700 text-xs sm:text-base`;
+    rowTh.innerText = r;
+    tr.appendChild(rowTh);
+    for(let c=1;c<=10;c++){
+      const td = document.createElement('td');
+      const value = r*c;
+      const isSq = (r===c);
+      td.id = `cell-${r}-${c}`;
+      td.className = `border-2 border-slate-200 p-2 font-semibold text-slate-700 cursor-pointer transition-all hover:scale-110 text-xs sm:text-base ${isSq?'bg-amber-100 font-extrabold text-amber-900':'bg-white'}`;
+      td.innerText = value;
+      td.onmouseover = ()=>highlightCellRange(r,c);
+      td.onmouseout = resetCellHighlights;
+      td.onclick = ()=>clickChartCell(r,c,value);
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+}
+function highlightCellRange(targetR, targetC){
+  resetCellHighlights();
+  for(let i=1;i<=10;i++){
+    const h = document.getElementById(`cell-${targetR}-${i}`); if(h) h.classList.add('bg-pink-50','text-pink-900');
+    const v = document.getElementById(`cell-${i}-${targetC}`); if(v) v.classList.add('bg-indigo-50','text-indigo-900');
+  }
+  document.querySelectorAll(`.header-row-cell-${targetR}`).forEach(el=>el.classList.add('bg-pink-400','text-white'));
+  document.querySelectorAll(`.header-col-cell-${targetC}`).forEach(el=>el.classList.add('bg-indigo-400','text-white'));
+  const main = document.getElementById(`cell-${targetR}-${targetC}`);
+  if(main){ main.className = main.className.replace('bg-white',''); main.classList.add('bg-emerald-400','text-slate-900','font-black','ring-4','ring-emerald-200','z-10'); }
+  const fb = document.getElementById('chart-live-feedback');
+  const enF = `${targetR} × ${targetC} = ${targetR*targetC}`;
+  const neF = `${nepaliNumbers(targetR)} गुणा ${nepaliNumbers(targetC)} बराबर ${nepaliNumbers(targetR*targetC)}`;
+  fb.innerHTML = `<span class='font-black text-emerald-800'>${(currentLanguage==='en')?enF:neF}</span>`;
+}
+function resetCellHighlights(){
+  for(let r=1;r<=10;r++){
+    document.querySelectorAll(`.header-row-cell-${r}`).forEach(el=>el.classList.remove('bg-pink-400','text-white'));
+    document.querySelectorAll(`.header-col-cell-${r}`).forEach(el=>el.classList.remove('bg-indigo-400','text-white'));
+    for(let c=1;c<=10;c++){
+      const td = document.getElementById(`cell-${r}-${c}`);
+      if(td) td.classList.remove('bg-pink-50','text-pink-900','bg-indigo-50','text-indigo-900','bg-emerald-400','text-slate-900','font-black','ring-4','ring-emerald-200','z-10');
+    }
+  }
+}
+function clickChartCell(r,c,val){
+  playTone(400+val*2,'sine',0.12,0.25);
+  speakText(`${r} times ${c} is ${val}`, `${nepaliNumbers(r)} गुणा ${nepaliNumbers(c)} बराबर ${nepaliNumbers(val)} हुन्छ।`);
+}
+
+/* =========================== DIVISION =========================== */
+function updateDivision(){
+  const dividend = parseInt(document.getElementById('slider-div1').value);
+  const divisor = parseInt(document.getElementById('slider-div2').value);
+  const quotient = Math.floor(dividend/divisor);
+  const remainder = dividend % divisor;
+  const disp = n => (currentLanguage==='en') ? n : nepaliNumbers(n);
+  document.getElementById('val-div1').innerText = disp(dividend);
+  document.getElementById('val-div2').innerText = disp(divisor);
+  document.getElementById('eq-div1').innerText = disp(dividend);
+  document.getElementById('eq-div2').innerText = disp(divisor);
+  document.getElementById('eq-divq').innerText = disp(quotient);
+  document.getElementById('eq-divr').innerText = disp(remainder);
+
+  const container = document.getElementById('visual-div-container');
+  container.innerHTML = '';
+  const colors = ['bg-indigo-400','bg-pink-400','bg-emerald-400','bg-purple-400','bg-sky-400','bg-orange-400','bg-teal-400','bg-fuchsia-400','bg-lime-400','bg-cyan-400'];
+  for(let g=0; g<divisor; g++){
+    const box = document.createElement('div');
+    box.className = "border-2 border-slate-300 rounded-xl p-2 flex flex-wrap gap-1 content-start w-28 min-h-[70px] bg-white";
+    for(let i=0;i<quotient;i++){
+      const dot = document.createElement('div');
+      dot.className = `w-4 h-4 rounded-full ${colors[g % colors.length]}`;
+      box.appendChild(dot);
+    }
+    container.appendChild(box);
+  }
+  if(remainder > 0){
+    const leftover = document.createElement('div');
+    leftover.className = "border-2 border-dashed border-amber-400 rounded-xl p-2 flex flex-wrap gap-1 content-start w-28 min-h-[70px] bg-amber-50";
+    for(let i=0;i<remainder;i++){
+      const dot = document.createElement('div');
+      dot.className = "w-4 h-4 rounded-full bg-amber-500";
+      leftover.appendChild(dot);
+    }
+    container.appendChild(leftover);
+  }
+}
+function speakDivision(){
+  const a = document.getElementById('slider-div1').value, b = document.getElementById('slider-div2').value;
+  const q = Math.floor(a/b), r = a % b;
+  const enTxt = r===0 ? `${a} divided by ${b} equals ${q}` : `${a} divided by ${b} equals ${q}, remainder ${r}`;
+  const neTxt = r===0 ? `${nepaliNumbers(a)} भाग ${nepaliNumbers(b)} बराबर ${nepaliNumbers(q)} हुन्छ` : `${nepaliNumbers(a)} भाग ${nepaliNumbers(b)} बराबर ${nepaliNumbers(q)}, बाँकी ${nepaliNumbers(r)}`;
+  speakText(enTxt, neTxt);
+}
+
+/* =========================== SIMPLIFICATION =========================== */
+function gcd(a,b){ return b===0 ? a : gcd(b, a%b); }
+function onSimpNumChange(){
+  const num = parseInt(document.getElementById('slider-simp-num').value);
+  const denSlider = document.getElementById('slider-simp-den');
+  if(parseInt(denSlider.value) <= num) denSlider.value = num+1;
+  updateSimplification();
+}
+function updateSimplification(){
+  const num = parseInt(document.getElementById('slider-simp-num').value);
+  let den = parseInt(document.getElementById('slider-simp-den').value);
+  if(den <= num){ den = num+1; document.getElementById('slider-simp-den').value = den; }
+  const g = gcd(num, den);
+  const simNum = num/g, simDen = den/g;
+  const disp = n => (currentLanguage==='en') ? n : nepaliNumbers(n);
+
+  document.getElementById('val-simp-num').innerText = disp(num);
+  document.getElementById('val-simp-den').innerText = disp(den);
+  document.getElementById('simp-fraction-display').innerText = `${disp(num)}/${disp(den)}`;
+  document.getElementById('simp-gcd-text').innerText = (currentLanguage==='en') ? `GCD(${num}, ${den}) = ${g}` : `म.स.उ.(${nepaliNumbers(num)}, ${nepaliNumbers(den)}) = ${nepaliNumbers(g)}`;
+  document.getElementById('simp-answer').innerText = `${disp(simNum)}/${disp(simDen)}`;
+
+  const colors = ['bg-emerald-500','bg-indigo-500','bg-pink-500','bg-amber-500','bg-purple-500','bg-sky-500'];
+  const before = document.getElementById('simp-bar-before');
+  before.innerHTML = '';
+  for(let i=0;i<den;i++){
+    const seg = document.createElement('div');
+    seg.className = `flex-1 border-r border-white/50 flex items-center justify-center text-white text-xs font-bold ${i<num? colors[0] : 'bg-slate-200'}`;
+    before.appendChild(seg);
+  }
+  const after = document.getElementById('simp-bar-after');
+  after.innerHTML = '';
+  for(let i=0;i<simDen;i++){
+    const seg = document.createElement('div');
+    seg.className = `flex-1 border-r border-white/50 flex items-center justify-center text-white text-xs font-bold ${i<simNum? colors[1] : 'bg-slate-200'}`;
+    after.appendChild(seg);
+  }
+
+  const stepsEl = document.getElementById('simp-steps');
+  if(currentLanguage==='en'){
+    stepsEl.innerHTML = `Step 1: Find the GCD of ${num} and ${den} &rarr; <b>${g}</b><br>Step 2: Divide both numerator and denominator by ${g}<br>${num} &divide; ${g} = ${simNum}, and ${den} &divide; ${g} = ${simDen}<br>Result: <b>${simNum}/${simDen}</b>`;
+  } else {
+    stepsEl.innerHTML = `चरण १: ${nepaliNumbers(num)} र ${nepaliNumbers(den)} को म.स.उ. पत्ता लगाउनुहोस् &rarr; <b>${nepaliNumbers(g)}</b><br>चरण २: अंश र हर दुवैलाई ${nepaliNumbers(g)} ले भाग गर्नुहोस्<br>${nepaliNumbers(num)} &divide; ${nepaliNumbers(g)} = ${nepaliNumbers(simNum)}, अनि ${nepaliNumbers(den)} &divide; ${nepaliNumbers(g)} = ${nepaliNumbers(simDen)}<br>उत्तर: <b>${nepaliNumbers(simNum)}/${nepaliNumbers(simDen)}</b>`;
+  }
+}
+function speakSimplify(){
+  const num = document.getElementById('slider-simp-num').value, den = document.getElementById('slider-simp-den').value;
+  const g = gcd(parseInt(num), parseInt(den));
+  speakText(`${num} over ${den} simplifies to ${num/g} over ${den/g}`, `${nepaliNumbers(num)} भाग ${nepaliNumbers(den)} लाई सरल गर्दा ${nepaliNumbers(num/g)} भाग ${nepaliNumbers(den/g)} हुन्छ`);
+}
+
+/* =========================== MIXED QUIZ =========================== */
+let score = 0, streak = 0, highscore = 0, questionAnswered = false;
+let quizCorrectAnswer = '', quizOptions = [];
+
+function generateNewQuiz(){
+  questionAnswered = false;
+  const ops = ['add','sub','mul','div','simplify'];
+  const op = ops[Math.floor(Math.random()*ops.length)];
+  let questionEn='', questionNe='', correct='';
+  let distractors = [];
+
+  if(op==='add'){
+    const a = Math.floor(Math.random()*20)+1, b = Math.floor(Math.random()*20)+1;
+    correct = (a+b).toString();
+    questionEn = `${a} + ${b} = ?`; questionNe = `${nepaliNumbers(a)} + ${nepaliNumbers(b)} = ?`;
+    while(distractors.length<3){ const d = parseInt(correct) + (Math.floor(Math.random()*6)-3); if(d>0 && d.toString()!==correct && !distractors.includes(d.toString())) distractors.push(d.toString()); }
+  } else if(op==='sub'){
+    const a = Math.floor(Math.random()*20)+10, b = Math.floor(Math.random()*a);
+    correct = (a-b).toString();
+    questionEn = `${a} - ${b} = ?`; questionNe = `${nepaliNumbers(a)} - ${nepaliNumbers(b)} = ?`;
+    while(distractors.length<3){ const d = parseInt(correct) + (Math.floor(Math.random()*6)-3); if(d>=0 && d.toString()!==correct && !distractors.includes(d.toString())) distractors.push(d.toString()); }
+  } else if(op==='mul'){
+    const a = Math.floor(Math.random()*10)+1, b = Math.floor(Math.random()*10)+1;
+    correct = (a*b).toString();
+    questionEn = `${a} \u00d7 ${b} = ?`; questionNe = `${nepaliNumbers(a)} \u00d7 ${nepaliNumbers(b)} = ?`;
+    while(distractors.length<3){ const d = parseInt(correct) + (Math.floor(Math.random()<0.5?1:-1))*(Math.floor(Math.random()*10)+1); if(d>0 && d.toString()!==correct && !distractors.includes(d.toString())) distractors.push(d.toString()); }
+  } else if(op==='div'){
+    const divisor = Math.floor(Math.random()*9)+2, quotient = Math.floor(Math.random()*10)+1;
+    const dividend = divisor*quotient;
+    correct = quotient.toString();
+    questionEn = `${dividend} \u00f7 ${divisor} = ?`; questionNe = `${nepaliNumbers(dividend)} \u00f7 ${nepaliNumbers(divisor)} = ?`;
+    while(distractors.length<3){ const d = quotient + (Math.floor(Math.random()*5)-2); if(d>0 && d.toString()!==correct && !distractors.includes(d.toString())) distractors.push(d.toString()); }
+  } else {
+    const g = Math.floor(Math.random()*4)+2;
+    const simNum = Math.floor(Math.random()*5)+1, simDen = simNum + Math.floor(Math.random()*5)+1;
+    const num = simNum*g, den = simDen*g;
+    correct = `${simNum}/${simDen}`;
+    questionEn = `Simplify: ${num}/${den}`; questionNe = `सरल गर्नुहोस्: ${nepaliNumbers(num)}/${nepaliNumbers(den)}`;
+    distractors.push(`${num}/${den}`);
+    while(distractors.length<3){ const dn = simNum + (Math.floor(Math.random()*3)-1), dd = simDen + (Math.floor(Math.random()*3)-1); const cand = `${Math.max(1,dn)}/${Math.max(2,dd)}`; if(cand!==correct && !distractors.includes(cand)) distractors.push(cand); }
+  }
+
+  window._quizQEn = questionEn; window._quizQNe = questionNe;
+  quizCorrectAnswer = correct;
+  quizOptions = [correct, ...distractors].sort(()=>Math.random()-0.5);
+
+  document.getElementById('quiz-question-text').innerText = (currentLanguage==='en') ? questionEn : questionNe;
+  for(let i=0;i<4;i++){
+    const btn = document.getElementById(`opt-${i}`);
+    btn.disabled = false;
+    btn.querySelector('span').innerText = (currentLanguage==='en') ? quizOptions[i] : quizOptions[i].split('').map(ch=>(ch>='0'&&ch<='9')?nepaliNumbers(ch):ch).join('');
+    btn.className = "quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center";
+  }
+  const progressPct = Math.min((streak % 10)*10, 100);
+  document.getElementById('quiz-progress-bar').style.width = `${progressPct}%`;
+  const fb = document.getElementById('quiz-feedback-box');
+  fb.classList.add('hidden');
+  fb.className = "hidden mt-6 p-4 rounded-xl text-center font-bold text-sm sm:text-base transition-all duration-300";
+}
+
+function submitAnswer(idx){
+  if(questionAnswered) return;
+  questionAnswered = true;
+  const selected = quizOptions[idx];
+  const fb = document.getElementById('quiz-feedback-box');
+  fb.classList.remove('hidden');
+  for(let i=0;i<4;i++) document.getElementById(`opt-${i}`).disabled = true;
+
+  if(selected === quizCorrectAnswer){
+    playSuccessSound();
+    score += 10; streak += 1;
+    confetti({particleCount:80, spread:60, origin:{y:0.8}});
+    if(score > highscore){ highscore = score; document.getElementById('quiz-highscore').innerText = highscore; try{ localStorage.setItem('school_math_highscore', highscore.toString()); }catch(e){} }
+    document.getElementById('quiz-score').innerText = score;
+    document.getElementById('quiz-streak').innerText = streak;
+    document.getElementById(`opt-${idx}`).className = "quiz-option-btn bg-emerald-500 border-2 border-emerald-600 text-white font-bold py-4 px-6 rounded-2xl text-xl kid-font shadow-md flex justify-between items-center";
+    fb.classList.add('bg-green-100','text-green-800','border','border-green-300');
+    fb.innerHTML = `<div class="flex items-center justify-center gap-2"><i class="fa-solid fa-circle-check text-xl"></i><span>${currentLanguage==='en'?'Fantastic! That is correct!':'अति उत्तम! सही उत्तर!'}</span></div>`;
+    speakText(`Correct! The answer is ${quizCorrectAnswer}`, `सही! उत्तर ${quizCorrectAnswer} हो`);
+  } else {
+    playFailSound();
+    streak = 0;
+    document.getElementById('quiz-streak').innerText = streak;
+    document.getElementById(`opt-${idx}`).className = "quiz-option-btn bg-red-500 border-2 border-red-600 text-white font-bold py-4 px-6 rounded-2xl text-xl kid-font shadow-md flex justify-between items-center";
+    for(let i=0;i<4;i++){ if(quizOptions[i]===quizCorrectAnswer){ document.getElementById(`opt-${i}`).className = "quiz-option-btn bg-yellow-100 border-4 border-dashed border-yellow-500 text-yellow-900 font-bold py-4 px-6 rounded-2xl text-xl kid-font flex justify-between items-center"; } }
+    fb.classList.add('bg-red-100','text-red-800','border','border-red-300');
+    fb.innerHTML = `<div class="flex items-center justify-center gap-2"><i class="fa-solid fa-triangle-exclamation text-xl"></i><span>${currentLanguage==='en'?'Oops! Correct answer is: '+quizCorrectAnswer : 'ओहो! सही उत्तर: '+quizCorrectAnswer}</span></div>`;
+    speakText(`The correct answer is ${quizCorrectAnswer}`, `सही उत्तर ${quizCorrectAnswer} हो`);
+  }
+  const nextBtn = document.createElement('button');
+  nextBtn.className = "mt-3 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-widest px-6 py-2 rounded-full shadow block mx-auto transition-all";
+  nextBtn.innerText = (currentLanguage==='en') ? 'Next Question' : 'अर्को प्रश्न';
+  nextBtn.onclick = function(){ playTickSound(); generateNewQuiz(); };
+  fb.appendChild(nextBtn);
+}
+
+/* =========================================================================
+   CLASS 6 MATHEMATICS LAB
+   ========================================================================= */
+function lcmOf(a,b){ return (a*b)/gcd(a,b); }
+
+function initLab6(){
+  switchLab6Tab('int');
+  updateIntegers();
+  updateHcfLcm();
+  updateRatio();
+  updatePercentage();
+  document.getElementById('quiz6-highscore').innerText = highscore6;
+  generateNewQuiz6();
+}
+
+function switchLab6Tab(tab){
+  activeLab6Tab = tab;
+  document.querySelectorAll('.tab-panel').forEach(p=>{ if(p.id.startsWith('labpanel6-')) p.classList.remove('active'); });
+  document.getElementById('labpanel6-'+tab).classList.add('active');
+  document.querySelectorAll('.labtab6-btn').forEach(b=>{ b.classList.remove('text-yellow-300','border-yellow-300'); b.classList.add('text-green-100','border-transparent'); });
+  const activeBtn = document.getElementById('labtab6-'+tab);
+  activeBtn.classList.remove('text-green-100','border-transparent');
+  activeBtn.classList.add('text-yellow-300','border-yellow-300');
+  playTickSound();
+}
+let activeLab6Tab = 'int';
+
+/* ----------------------------- INTEGERS ----------------------------- */
+function updateIntegers(){
+  const start = parseInt(document.getElementById('slider-int1').value);
+  const jump = parseInt(document.getElementById('slider-int2').value);
+  const end = start + jump;
+  document.getElementById('val-int1').innerText = (currentLanguage==='en') ? start : nepaliNumbers(start);
+  document.getElementById('val-int2').innerText = (currentLanguage==='en') ? jump : nepaliNumbers(jump);
+  document.getElementById('eq-int1').innerText = (currentLanguage==='en') ? start : nepaliNumbers(start);
+  document.getElementById('eq-int2').innerText = (currentLanguage==='en') ? Math.abs(jump) : nepaliNumbers(Math.abs(jump));
+  document.getElementById('eq-intop').innerText = jump>=0 ? '+' : '\u2212';
+  document.getElementById('eq-intans').innerText = (currentLanguage==='en') ? end : nepaliNumbers(end);
+
+  const container = document.getElementById('visual-int-container');
+  container.innerHTML = '';
+  const lo = -20, hi = 20;
+  const track = document.createElement('div');
+  track.className = 'relative';
+  track.style.minWidth = '820px';
+  track.style.height = '120px';
+  let ticks = '';
+  for(let i=lo;i<=hi;i++){
+    const pct = ((i-lo)/(hi-lo))*100;
+    const isMajor = (i%5===0);
+    ticks += `<div class="absolute top-8 flex flex-col items-center" style="left:${pct}%; transform:translateX(-50%);">
+      <div class="${isMajor?'w-0.5 h-4 bg-slate-400':'w-px h-2 bg-slate-300'}"></div>
+      ${isMajor?`<span class="text-[10px] text-slate-500 mt-1">${(currentLanguage==='en')?i:nepaliNumbers(i)}</span>`:''}
+    </div>`;
+  }
+  const startPct = ((start-lo)/(hi-lo))*100;
+  const endPct = ((end-lo)/(hi-lo))*100;
+  const barLeft = Math.min(startPct,endPct), barWidth = Math.abs(endPct-startPct);
+  track.innerHTML = `
+    <div class="absolute top-8 left-0 right-0 h-0.5 bg-slate-300"></div>
+    ${ticks}
+    <div class="absolute top-6 h-1.5 rounded-full ${jump>=0?'bg-emerald-400':'bg-rose-400'}" style="left:${barLeft}%; width:${barWidth}%;"></div>
+    <div class="absolute top-2 flex flex-col items-center" style="left:${startPct}%; transform:translateX(-50%);">
+      <span class="text-[10px] font-bold text-indigo-600 mb-0.5">${(currentLanguage==='en')?'Start':'सुरु'}</span>
+      <div class="w-3 h-3 rounded-full bg-indigo-600 border-2 border-white shadow"></div>
+    </div>
+    <div class="absolute top-2 flex flex-col items-center" style="left:${endPct}%; transform:translateX(-50%);">
+      <span class="text-[10px] font-bold text-emerald-700 mb-0.5">${(currentLanguage==='en')?'End':'अन्त्य'}</span>
+      <div class="w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow flex items-center justify-center"><i class="fa-solid fa-flag-checkered text-[8px] text-white"></i></div>
+    </div>`;
+  container.appendChild(track);
+}
+function speakIntegers(){
+  const start = document.getElementById('slider-int1').value, jump = document.getElementById('slider-int2').value;
+  const end = parseInt(start)+parseInt(jump);
+  speakText(`${start} ${jump>=0?'plus':'minus'} ${Math.abs(jump)} equals ${end}`, `${nepaliNumbers(start)} ${jump>=0?'जोड':'घटाउ'} ${nepaliNumbers(Math.abs(jump))} बराबर ${nepaliNumbers(end)}`);
+}
+
+/* ----------------------------- HCF & LCM ----------------------------- */
+function primeFactors(n){
+  const factors = [];
+  let num = n, d = 2;
+  while(d*d<=num){
+    while(num%d===0){ factors.push(d); num/=d; }
+    d++;
+  }
+  if(num>1) factors.push(num);
+  return factors;
+}
+function updateHcfLcm(){
+  const a = parseInt(document.getElementById('slider-hl1').value);
+  const b = parseInt(document.getElementById('slider-hl2').value);
+  document.getElementById('val-hl1').innerText = (currentLanguage==='en') ? a : nepaliNumbers(a);
+  document.getElementById('val-hl2').innerText = (currentLanguage==='en') ? b : nepaliNumbers(b);
+  const h = gcd(a,b), l = lcmOf(a,b);
+  document.getElementById('hl-hcf').innerText = (currentLanguage==='en') ? h : nepaliNumbers(h);
+  document.getElementById('hl-lcm').innerText = (currentLanguage==='en') ? l : nepaliNumbers(l);
+
+  const fa = primeFactors(a), fb = primeFactors(b);
+  const fmt = (arr)=> arr.map(x=> currentLanguage==='en' ? x : nepaliNumbers(x)).join(' \u00d7 ');
+  const stepsEl = document.getElementById('hl-steps');
+  if(currentLanguage==='en'){
+    stepsEl.innerHTML = `Prime factors of ${a}: <b>${fmt(fa)}</b><br>Prime factors of ${b}: <b>${fmt(fb)}</b><br><br>HCF = product of common prime factors = <b>${h}</b><br>LCM = (${a} &times; ${b}) &divide; HCF = <b>${l}</b>`;
+  } else {
+    stepsEl.innerHTML = `${nepaliNumbers(a)} का अभाज्य गुणनखण्ड: <b>${fmt(fa)}</b><br>${nepaliNumbers(b)} का अभाज्य गुणनखण्ड: <b>${fmt(fb)}</b><br><br>म.स.उ. = साझा अभाज्य गुणनखण्डको गुणनफल = <b>${nepaliNumbers(h)}</b><br>ल.स.गु. = (${nepaliNumbers(a)} \u00d7 ${nepaliNumbers(b)}) \u00f7 म.स.उ. = <b>${nepaliNumbers(l)}</b>`;
+  }
+}
+function speakHcfLcm(){
+  const a = document.getElementById('slider-hl1').value, b = document.getElementById('slider-hl2').value;
+  const h = gcd(parseInt(a),parseInt(b)), l = lcmOf(parseInt(a),parseInt(b));
+  speakText(`The HCF of ${a} and ${b} is ${h}, and the LCM is ${l}`, `${nepaliNumbers(a)} र ${nepaliNumbers(b)} को म.स.उ. ${nepaliNumbers(h)} हो, र ल.स.गु. ${nepaliNumbers(l)} हो`);
+}
+
+/* ----------------------------- RATIO & PROPORTION ----------------------------- */
+function updateRatio(){
+  const a = parseInt(document.getElementById('slider-ra').value);
+  const b = parseInt(document.getElementById('slider-rb').value);
+  document.getElementById('val-ra').innerText = (currentLanguage==='en') ? a : nepaliNumbers(a);
+  document.getElementById('val-rb').innerText = (currentLanguage==='en') ? b : nepaliNumbers(b);
+  const g = gcd(a,b);
+  const sa = a/g, sb = b/g;
+  document.getElementById('ratio-answer').innerText = (currentLanguage==='en') ? `${sa}:${sb}` : `${nepaliNumbers(sa)}:${nepaliNumbers(sb)}`;
+
+  const bar = document.getElementById('ratio-bar');
+  bar.innerHTML = '';
+  const total = sa+sb;
+  const segA = document.createElement('div');
+  segA.className = 'bg-indigo-500 flex items-center justify-center text-white text-xs sm:text-sm font-bold';
+  segA.style.width = `${(sa/total)*100}%`;
+  segA.innerText = 'A';
+  const segB = document.createElement('div');
+  segB.className = 'bg-pink-500 flex items-center justify-center text-white text-xs sm:text-sm font-bold';
+  segB.style.width = `${(sb/total)*100}%`;
+  segB.innerText = 'B';
+  bar.appendChild(segA); bar.appendChild(segB);
+
+  const explainEl = document.getElementById('ratio-explain');
+  if(currentLanguage==='en'){
+    explainEl.innerHTML = `Step 1: Find the HCF of ${a} and ${b} &rarr; <b>${g}</b><br>Step 2: Divide both by ${g} &rarr; ${a}/${g} : ${b}/${g} = <b>${sa}:${sb}</b>`;
+  } else {
+    explainEl.innerHTML = `चरण १: ${nepaliNumbers(a)} र ${nepaliNumbers(b)} को म.स.उ. पत्ता लगाउनुहोस् &rarr; <b>${nepaliNumbers(g)}</b><br>चरण २: दुवैलाई ${nepaliNumbers(g)} ले भाग गर्नुहोस् &rarr; <b>${nepaliNumbers(sa)}:${nepaliNumbers(sb)}</b>`;
+  }
+}
+function speakRatio(){
+  const a = document.getElementById('slider-ra').value, b = document.getElementById('slider-rb').value;
+  const g = gcd(parseInt(a),parseInt(b));
+  speakText(`The ratio ${a} to ${b} simplifies to ${a/g} to ${b/g}`, `अनुपात ${nepaliNumbers(a)} अनुपात ${nepaliNumbers(b)} लाई सरल गर्दा ${nepaliNumbers(a/g)} अनुपात ${nepaliNumbers(b/g)} हुन्छ`);
+}
+
+/* ----------------------------- PERCENTAGE ----------------------------- */
+function updatePercentage(){
+  const val = parseInt(document.getElementById('slider-pctv').value);
+  const pct = parseInt(document.getElementById('slider-pctp').value);
+  document.getElementById('val-pctv').innerText = (currentLanguage==='en') ? val : nepaliNumbers(val);
+  document.getElementById('val-pctp').innerText = (currentLanguage==='en') ? `${pct}%` : `${nepaliNumbers(pct)}%`;
+  const result = Math.round((val*pct/100)*100)/100;
+
+  document.getElementById('pct-question').innerText = (currentLanguage==='en') ? `${pct}% of ${val} is:` : `${nepaliNumbers(val)} को ${nepaliNumbers(pct)}% कति हो:`;
+  document.getElementById('pct-answer').innerText = (currentLanguage==='en') ? result : nepaliNumbers(result);
+
+  const fill = document.getElementById('pct-fill');
+  fill.style.width = `${pct}%`;
+  fill.innerText = `${pct}%`;
+
+  const stepsEl = document.getElementById('pct-steps');
+  if(currentLanguage==='en'){
+    stepsEl.innerHTML = `Step 1: Write ${pct}% as a fraction &rarr; ${pct}/100<br>Step 2: Multiply by the total &rarr; (${pct}/100) &times; ${val}<br>Result: <b>${result}</b>`;
+  } else {
+    stepsEl.innerHTML = `चरण १: ${nepaliNumbers(pct)}% लाई भिन्नमा लेख्नुहोस् &rarr; ${nepaliNumbers(pct)}/१००<br>चरण २: जम्मा मूल्यले गुणा गर्नुहोस् &rarr; (${nepaliNumbers(pct)}/१००) \u00d7 ${nepaliNumbers(val)}<br>उत्तर: <b>${nepaliNumbers(result)}</b>`;
+  }
+}
+function speakPercentage(){
+  const val = document.getElementById('slider-pctv').value, pct = document.getElementById('slider-pctp').value;
+  const result = Math.round((val*pct/100)*100)/100;
+  speakText(`${pct} percent of ${val} is ${result}`, `${nepaliNumbers(val)} को ${nepaliNumbers(pct)} प्रतिशत ${nepaliNumbers(result)} हो`);
+}
+
+/* ----------------------------- MIXED QUIZ (CLASS 6) ----------------------------- */
+let score6 = 0, streak6 = 0, highscore6 = 0, questionAnswered6 = false;
+let quiz6CorrectAnswer = '', quiz6Options = [];
+
+function generateNewQuiz6(){
+  questionAnswered6 = false;
+  const ops = ['integer','hcf','lcm','ratio','percentage'];
+  const op = ops[Math.floor(Math.random()*ops.length)];
+  let questionEn='', questionNe='', correct='';
+  let distractors = [];
+
+  if(op==='integer'){
+    const a = Math.floor(Math.random()*31)-15, b = Math.floor(Math.random()*31)-15;
+    const sum = a+b; correct = sum.toString();
+    questionEn = `${a} ${b>=0?'+':'-'} ${Math.abs(b)} = ?`; questionNe = `${nepaliNumbers(a)} ${b>=0?'+':'-'} ${nepaliNumbers(Math.abs(b))} = ?`;
+    while(distractors.length<3){ const d = sum + (Math.floor(Math.random()*7)-3); if(d.toString()!==correct && !distractors.includes(d.toString())) distractors.push(d.toString()); }
+  } else if(op==='hcf'){
+    const a = (Math.floor(Math.random()*20)+2)*2, b = (Math.floor(Math.random()*20)+2)*3;
+    const h = gcd(a,b); correct = h.toString();
+    questionEn = `Find the HCF of ${a} and ${b}`; questionNe = `${nepaliNumbers(a)} र ${nepaliNumbers(b)} को म.स.उ. पत्ता लगाउनुहोस्`;
+    while(distractors.length<3){ const d = h + (Math.floor(Math.random()*5)+1)*(Math.random()<0.5?1:-1); if(d>0 && d.toString()!==correct && !distractors.includes(d.toString())) distractors.push(d.toString()); }
+  } else if(op==='lcm'){
+    const a = Math.floor(Math.random()*8)+2, b = Math.floor(Math.random()*8)+2;
+    const l = lcmOf(a,b); correct = l.toString();
+    questionEn = `Find the LCM of ${a} and ${b}`; questionNe = `${nepaliNumbers(a)} र ${nepaliNumbers(b)} को ल.स.गु. पत्ता लगाउनुहोस्`;
+    while(distractors.length<3){ const d = l + (Math.floor(Math.random()*6)+1)*(Math.random()<0.5?1:-1); if(d>0 && d.toString()!==correct && !distractors.includes(d.toString())) distractors.push(d.toString()); }
+  } else if(op==='ratio'){
+    const g = Math.floor(Math.random()*5)+2;
+    const sa = Math.floor(Math.random()*6)+1, sb = sa + Math.floor(Math.random()*6)+1;
+    const a = sa*g, b = sb*g;
+    correct = `${sa}:${sb}`;
+    questionEn = `Simplify the ratio ${a}:${b}`; questionNe = `अनुपात ${nepaliNumbers(a)}:${nepaliNumbers(b)} लाई सरल गर्नुहोस्`;
+    distractors.push(`${a}:${b}`);
+    while(distractors.length<3){ const dn = sa+(Math.floor(Math.random()*3)-1), dd = sb+(Math.floor(Math.random()*3)-1); const cand = `${Math.max(1,dn)}:${Math.max(2,dd)}`; if(cand!==correct && !distractors.includes(cand)) distractors.push(cand); }
+  } else {
+    const pct = (Math.floor(Math.random()*10)+1)*10;
+    const base = (Math.floor(Math.random()*20)+1)*10;
+    const result = (base*pct)/100;
+    correct = result.toString();
+    questionEn = `${pct}% of ${base} = ?`; questionNe = `${nepaliNumbers(base)} को ${nepaliNumbers(pct)}% = ?`;
+    while(distractors.length<3){ const d = result + (Math.floor(Math.random()*5)+1)*10*(Math.random()<0.5?1:-1); if(d>0 && d.toString()!==correct && !distractors.includes(d.toString())) distractors.push(d.toString()); }
+  }
+
+  window._quiz6QEn = questionEn; window._quiz6QNe = questionNe;
+  quiz6CorrectAnswer = correct;
+  quiz6Options = [correct, ...distractors].sort(()=>Math.random()-0.5);
+
+  document.getElementById('quiz6-question-text').innerText = (currentLanguage==='en') ? questionEn : questionNe;
+  for(let i=0;i<4;i++){
+    const btn = document.getElementById(`opt6-${i}`);
+    btn.disabled = false;
+    btn.querySelector('span').innerText = (currentLanguage==='en') ? quiz6Options[i] : quiz6Options[i].split('').map(ch=>(ch>='0'&&ch<='9')?nepaliNumbers(ch):ch).join('');
+    btn.className = "quiz-option-btn bg-slate-50 hover:bg-emerald-50 hover:border-emerald-300 border-2 border-slate-200 text-slate-800 font-bold py-4 px-6 rounded-2xl text-xl kid-font transition-all shadow-sm flex justify-between items-center";
+  }
+  const progressPct = Math.min((streak6 % 10)*10, 100);
+  document.getElementById('quiz6-progress-bar').style.width = `${progressPct}%`;
+  const fb = document.getElementById('quiz6-feedback-box');
+  fb.classList.add('hidden');
+  fb.className = "hidden mt-6 p-4 rounded-xl text-center font-bold text-sm sm:text-base transition-all duration-300";
+}
+
+function submitAnswer6(idx){
+  if(questionAnswered6) return;
+  questionAnswered6 = true;
+  const selected = quiz6Options[idx];
+  const fb = document.getElementById('quiz6-feedback-box');
+  fb.classList.remove('hidden');
+  for(let i=0;i<4;i++) document.getElementById(`opt6-${i}`).disabled = true;
+
+  if(selected === quiz6CorrectAnswer){
+    playSuccessSound();
+    score6 += 10; streak6 += 1;
+    confetti({particleCount:80, spread:60, origin:{y:0.8}});
+    if(score6 > highscore6){ highscore6 = score6; document.getElementById('quiz6-highscore').innerText = highscore6; try{ localStorage.setItem('school_math6_highscore', highscore6.toString()); }catch(e){} }
+    document.getElementById('quiz6-score').innerText = score6;
+    document.getElementById('quiz6-streak').innerText = streak6;
+    document.getElementById(`opt6-${idx}`).className = "quiz-option-btn bg-emerald-500 border-2 border-emerald-600 text-white font-bold py-4 px-6 rounded-2xl text-xl kid-font shadow-md flex justify-between items-center";
+    fb.classList.add('bg-green-100','text-green-800','border','border-green-300');
+    fb.innerHTML = `<div class="flex items-center justify-center gap-2"><i class="fa-solid fa-circle-check text-xl"></i><span>${currentLanguage==='en'?'Fantastic! That is correct!':'अति उत्तम! सही उत्तर!'}</span></div>`;
+    speakText(`Correct! The answer is ${quiz6CorrectAnswer}`, `सही! उत्तर ${quiz6CorrectAnswer} हो`);
+  } else {
+    playFailSound();
+    streak6 = 0;
+    document.getElementById('quiz6-streak').innerText = streak6;
+    document.getElementById(`opt6-${idx}`).className = "quiz-option-btn bg-red-500 border-2 border-red-600 text-white font-bold py-4 px-6 rounded-2xl text-xl kid-font shadow-md flex justify-between items-center";
+    for(let i=0;i<4;i++){ if(quiz6Options[i]===quiz6CorrectAnswer){ document.getElementById(`opt6-${i}`).className = "quiz-option-btn bg-yellow-100 border-4 border-dashed border-yellow-500 text-yellow-900 font-bold py-4 px-6 rounded-2xl text-xl kid-font flex justify-between items-center"; } }
+    fb.classList.add('bg-red-100','text-red-800','border','border-red-300');
+    fb.innerHTML = `<div class="flex items-center justify-center gap-2"><i class="fa-solid fa-triangle-exclamation text-xl"></i><span>${currentLanguage==='en'?'Oops! Correct answer is: '+quiz6CorrectAnswer : 'ओहो! सही उत्तर: '+quiz6CorrectAnswer}</span></div>`;
+    speakText(`The correct answer is ${quiz6CorrectAnswer}`, `सही उत्तर ${quiz6CorrectAnswer} हो`);
+  }
+  const nextBtn = document.createElement('button');
+  nextBtn.className = "mt-3 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-widest px-6 py-2 rounded-full shadow block mx-auto transition-all";
+  nextBtn.innerText = (currentLanguage==='en') ? 'Next Question' : 'अर्को प्रश्न';
+  nextBtn.onclick = function(){ playTickSound(); generateNewQuiz6(); };
+  fb.appendChild(nextBtn);
+}
+</script>
+</body>
+</html>
